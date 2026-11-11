@@ -29,25 +29,20 @@ test('Academics and Enrollment menus preserve academic pages, add exact SOLAR de
  assert.ok(!doc.querySelector('.nav-leading').textContent.includes('Menu'));
 });
 test('Reminder discovery ignores site chrome and external images, deduplicates PNG sources, and prefers reminder content',()=>{
- const parser=remindersDOM('<header><img src="/logo.png"></header><main><img src="/misc.png"><img src="/images/OSES_1T2627_ALAB.png?v=2" alt="Enrollment reminders"><a href="/images/OSES_1T2627_ALAB.png?v=2">Download</a><img src="https://unrelated.invalid/reminder.png"></main>');
- const images=parser.reminderImages();assert.equal(images.length,1);assert.equal(images[0].url,origin+'/images/OSES_1T2627_ALAB.png?v=2');
- assert.throws(()=>remindersDOM('<input type="password"><img src="/images/OSES_1T2627_ALAB.png">').reminderImages(),/session expired/);
+ const parser=remindersDOM('<header><img src="/logo.png"></header><main><img src="/misc.png"><img src="/images/enrollment-reminders.png?v=2" alt="Enrollment reminders"><a href="/images/enrollment-reminders.png?v=2">Download</a><img src="https://unrelated.invalid/reminder.png"></main>');
+ const images=parser.reminderImages();assert.equal(images.length,1);assert.equal(images[0].url,origin+'/images/enrollment-reminders.png?v=2');
+ assert.throws(()=>remindersDOM('<input type="password"><img src="/reminders.png">').reminderImages(),/session expired/);
  assert.throws(()=>remindersDOM('<main><img src="/logo.png"></main>').reminderImages(),/PNG image is missing/);
-});
-test('Reminders fetches one visible OSES term image and ignores generic images, hidden history and download links',()=>{
- const parser=remindersDOM('<main><img src="/images/reminders.png"><img src="/images/OSES_1T2627_ALAB.png" style="display:none"><a href="/images/OSES_1T2627_ALAB.png">History</a><img src="/images/OSES_3T2829_ALAB.png" style="width:100%;"><img src="/images/OSES_2T2829_ALAB.png"></main>');
- const images=parser.reminderImages();assert.equal(images.length,1);assert.equal(images[0].url,origin+'/images/OSES_3T2829_ALAB.png');
- assert.throws(()=>remindersDOM('<main><a href="/images/OSES_1T2627_ALAB.png">Download</a><img src="https://unrelated.invalid/images/OSES_1T2627_ALAB.png"></main>').reminderImages(),/OSES.*missing/);
 });
 test('Authenticated reminders collection validates PNG bytes and returns an offline image rather than a live network dependency',async()=>{
  let request;const bytes=new Uint8Array([137,80,78,71,13,10,26,10,0,1,2]);
- const parser=remindersDOM('<main><img src="/images/OSES_1T2627_ALAB.png" alt="Official reminders"></main>',async(url,options)=>{request={url,options};return {ok:true,headers:{get:()=>String(bytes.length)},arrayBuffer:async()=>bytes.buffer};});
+ const parser=remindersDOM('<main><img src="/reminders.png" alt="Official reminders"></main>',async(url,options)=>{request={url,options};return {ok:true,headers:{get:()=>String(bytes.length)},arrayBuffer:async()=>bytes.buffer};});
  const result=await parser.reminders();assert.equal(request.options.credentials,'include');assert.equal(request.options.redirect,'error');
  assert.equal(result.discovery.url,origin+'/enrollment/reminders');assert.equal(result.data.images[0].dataUrl,'data:image/png;base64,'+btoa(String.fromCharCode(...bytes)));
  const html=enrollmentReminders({data:result.data});assert.ok(html.includes('src="data:image/png;base64,'));assert.ok(!html.includes('src="https:'));assert.ok(html.includes('Official reminders'));
 });
 test('Expired image responses and oversized PNGs fail explicitly instead of replacing cached images',async()=>{
- const html='<main><img src="/images/OSES_1T2627_ALAB.png"></main>';
+ const html='<main><img src="/reminders.png"></main>';
  const invalid=remindersDOM(html,async()=>({ok:true,headers:{get:()=>null},arrayBuffer:async()=>new TextEncoder().encode('<html>Login</html>').buffer}));await assert.rejects(()=>invalid.reminders(),/did not return a PNG/);
  const large=remindersDOM(html,async()=>({ok:true,headers:{get:()=>8000001},arrayBuffer:async()=>{throw Error('Must reject before reading');}}));await assert.rejects(()=>large.reminders(),/too large/);
  const denied=remindersDOM(html,async()=>({ok:false,status:403}));await assert.rejects(()=>denied.reminders(),/HTTP 403/);

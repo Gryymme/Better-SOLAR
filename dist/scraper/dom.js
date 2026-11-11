@@ -111,17 +111,20 @@
  }
  function submitted(state,selection){guard();const selected=Object.entries(selection).every(([id,value])=>(document.getElementById(id)||document.querySelector(`select[name="${CSS.escape(id)}"]`))?.value===value);const marker=globalThis.__betterSolarSubmit;const fresh=performance.timeOrigin!==state.before;return {ready:document.readyState==='complete'&&selected&&(fresh||(marker?.token===state.token&&marker.changed&&Date.now()-marker.lastChanged>=600)),error:marker?.error||'',fresh,selected,url:location.href};}
  function reminderImages(){
-   guard();
-   for(const element of document.querySelectorAll('img[src]')){
-     let excluded=false;for(let parent=element;parent;parent=parent.parentElement){if(['NAV','HEADER','FOOTER'].includes(parent.tagName)||parent.hidden||parent.getAttribute?.('aria-hidden')==='true'||/display\s*:\s*none|visibility\s*:\s*hidden/i.test(parent.getAttribute?.('style')||''))excluded=true;}
+   guard();const candidates=[];
+   for(const element of document.querySelectorAll('img,a[href]')){
+     let excluded=false;for(let parent=element;parent;parent=parent.parentElement){if(['NAV','HEADER','FOOTER'].includes(parent.tagName)||parent.hidden||parent.getAttribute?.('aria-hidden')==='true')excluded=true;}
      if(excluded)continue;
-     let url;try{url=new URL(element.getAttribute('src'),location.href);}catch{continue;}
-     if(url.origin!==location.origin||url.protocol!=='https:'||!/^\/images\/OSES_\d+T\d{4}_ALAB\.png$/i.test(url.pathname))continue;
-     return [{url:url.href,alt:element.getAttribute('alt')||'Enrollment reminders'}];
+     const raw=element.tagName==='IMG'?(element.getAttribute('data-src')||element.getAttribute('src')):element.getAttribute('href');if(!raw)continue;
+     let url;try{url=new URL(raw,location.href);}catch{continue;}
+     const label=[element.getAttribute('alt'),element.getAttribute('id'),element.getAttribute('class'),url.pathname].filter(Boolean).join(' ');
+     if(url.origin!==location.origin||url.protocol!=='https:'||!/^.*\.png$/i.test(url.pathname)||/logo|favicon|avatar|icon|seal/i.test(label))continue;
+     if(!candidates.some(candidate=>candidate.url===url.href))candidates.push({url:url.href,alt:element.getAttribute('alt')||'Enrollment reminders',preferred:/enroll|remind/i.test(label)});
    }
-   throw Error('The term-specific OSES enrollment reminders PNG image is missing. Sign in to SOLAR and retry collection.');
+   const preferred=candidates.filter(candidate=>candidate.preferred);const images=preferred.length?preferred:candidates;
+   if(!images.length)throw Error('Enrollment reminders PNG image is missing. Sign in to SOLAR and retry collection.');
+   return images;
  }
-
  async function reminders(){
    const discovery=discover(),images=[];let total=0;
    // Fetch within the signed-in SOLAR tab, so protected image requests use its session.

@@ -67,7 +67,7 @@ async function eraseData(){
    // The active task is stopped and fully drained before clearing storage.
    if(activePump)await activePump;
    const resetAt=await clearAllData();
-   const saved=await chrome.storage.local.get(null),keys=Object.keys(saved).filter(key=>!['theme','confirmExternalLinks'].includes(key));
+   const saved=await chrome.storage.local.get(null),keys=Object.keys(saved).filter(key=>key!=='theme');
    if(keys.length)await chrome.storage.local.remove(keys);
    await chrome.storage.local.set({dataResetAt:resetAt});
    return {resetAt};

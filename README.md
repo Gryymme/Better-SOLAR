@@ -4,18 +4,6 @@ A local-first companion for FEU Alabang SOLAR, built as a Chrome/Edge Manifest V
 
 **Delivery status:** Implementation and automated fixture tests are included. A real signed-in SOLAR scrape, real Canvas connection, browser layout review, and installed-extension acceptance checks still need to be performed. This environment could not launch Chromium. See [Verification](docs/VERIFICATION.md) for the precise scope of testing and remaining checks.
 
-## Version 1.0.7
-
-Clicking a visualizer course block now offers **Remove course**, **Remove all courses**, and **Cancel**. The redundant list beneath the timetable is gone. Hovering a clickable block changes its color and gives it the same lift as a button, including a separate red hover color for full courses.
-
-Word wrapping now keeps words together throughout the interface. Remaining Slots receives a wider column in both offerings tables. Calendar title truncation also prefers complete words.
-
-External website links ask before opening. Choose **Proceed** or **Cancel**; checking **Do not ask again** applies to external links across the app and extension popup. In Settings, turn **Ask before opening external websites** back on to restore confirmation. This preference is separate from academic data and survives Delete all scraped data, like the theme preference. Registration and COR Revision carry northeast arrows.
-
-Theme changes animate color transitions, including changes from another app window. Dark mode uses neutral black/gray surfaces and keeps intentional green, red and amber elements in their corresponding colors. Reduced-motion preferences disable the transition.
-
-Enrollment Reminders collects only the visible term-specific `/images/OSES_<term-and-year>_ALAB.png` image (for example `OSES_1T2627_ALAB.png`), instead of collecting other page images. Run **Scrape Data** while signed in to refresh this image. Unrelated older cached images are no longer displayed. See [the full change log](docs/CHANGELOG-1.0.7.md).
-
 ## Version 1.0.6
 
 Schedule and Assessment now uses its correct title and the shared **BETTER SOLAR** eyebrow. Courses Offered is inside **Enrollment** on desktop and in the sidebar. The expanded logo is larger, page/header/footer edges share consistent gutters, header controls have more horizontal padding, and Settings is compact while matching Exit's height.
@@ -83,7 +71,7 @@ The collector reads these seven SOLAR areas:
 - **Curriculum**: all year/term groups, co-requisites and prerequisites.
 - **Assessment**: every available SAF term, all registration fields, enrolled courses and variable assessment/payment-option labels.
 - **Grades**: every available grades term; unavailable finals remain blank in storage.
-- **Enrollment Reminders**: only the visible OSES term-specific Alabang PNG on the live reminders page; it is downloaded within the signed-in SOLAR tab and saved locally for offline viewing.
+- **Enrollment Reminders**: PNG images discovered on the live reminders page; protected images are downloaded within the signed-in SOLAR tab and saved locally for offline viewing.
 
 The collector uses a separate inactive SOLAR tab and normal form submissions, including SOLAR's own CSRF/session handling. Your existing tab and selections stay untouched. The collector tab closes when the run finishes. Do not navigate or close that tab while collection is running.
 
@@ -103,7 +91,7 @@ The shared navigation provides Dashboard; Academics (User Profile, Curriculum, B
 
 Balance Summary, SAF, Grades, and Courses Offered require an explicit **Term + School Year + Submit** action before term-specific details appear. Choices come from collected records and reported failed attempts, without fixed academic years. The SAF heading and navigation both use **Schedule and Assessment**, with **BETTER SOLAR** above the page heading.
 
-Light is the default when no explicit preference is saved. Open the Settings gear for Light/Dark appearance, external website confirmation, the collection report and Delete all scraped data. Appearance persists across the popup and every application window. On mobile, Settings is inside the side menu. All academic data stays in IndexedDB on this device; theme/progress use extension-local storage. Each verified student identity has a separate local record scope to prevent records from different SOLAR accounts from mixing.
+Light is the default when no explicit preference is saved. Open the Settings gear for Light/Dark appearance and Delete all scraped data. Appearance persists across the popup and every application window. On mobile, Settings is inside the side menu. All academic data stays in IndexedDB on this device; theme/progress use extension-local storage. Each verified student identity has a separate local record scope to prevent records from different SOLAR accounts from mixing.
 
 ## Canvas calendar
 
@@ -127,7 +115,7 @@ Open **Courses Offered**, submit a term/year, then choose **Open Schedule Creato
 - Zero-slot or unknown-slot courses stay selectable and highlighted in red. Adding them shows a warning; confirmation adds red blocks to the visualizer. Back keeps the selection without adding it.
 - **Add a Block Section** checks every course in the block before adding the whole block.
 - The checks reject overlaps against existing courses and within the new selection. Error messages identify both courses and the meeting day/time. No partial insertion occurs.
-- Click a course block to open Course actions. Remove course deletes every meeting of that selected course; Remove all courses clears the weekly visualizer. Cancel changes nothing. Keyboard users can focus a block and press Enter or Space. No separate course list is displayed beneath the timetable.
+- Click a course block or the Remove button in the list beneath it. Confirm Remove course to remove every meeting of that course, or choose Cancel to keep it. Keyboard users can focus a block and press Enter or Space.
 - Closing/reopening the visualizer retains its state. The draft uses that application window's session storage while the course page is open. Leaving/reloading the page or choosing a different offered term clears the draft; returning requires selecting term/year again.
 
 Course-offering tables do not provide course titles. The visualizer looks titles up from the cached curriculum where possible; otherwise it displays the source course code. It never invents a title. It does not enroll you in courses or send a registration request.
