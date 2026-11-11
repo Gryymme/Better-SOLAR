@@ -1,10 +1,11 @@
+import {initializeExternalLinks} from './external-links.js';
 import {initTheme} from './theme.js';
 import {displayedProgress,syncProgress} from './progress-layout.js';
 import {esc,icon,cacheFeedback} from './ui.js';
 import {openSettings} from './settings.js';
 import {listenForDataReset} from './data-reset.js';
 import {initializeFonts} from './fonts.js';
-await initTheme();void initializeFonts();const settings=document.querySelector('#settings');settings.innerHTML=icon('settings');settings.onclick=openSettings;listenForDataReset(()=>display({}));
+await initTheme();await initializeExternalLinks();void initializeFonts();const settings=document.querySelector('#settings');settings.innerHTML=icon('settings');settings.onclick=openSettings;listenForDataReset(()=>display({}));
 function display(p={}){
  const running=p.state==='running',el=document.querySelector('#progress'),previous=displayedProgress(el),expanded=el.querySelector('details')?.open||false;
  document.querySelector('#scrape').disabled=running;

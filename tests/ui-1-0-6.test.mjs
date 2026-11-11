@@ -47,11 +47,11 @@ test('Course removal confirmation identifies the course, waits for a decision, a
  const previousDocument=globalThis.document,previousMedia=globalThis.matchMedia;let lastDialog,focusCount=0;
  globalThis.matchMedia=()=>({matches:true});
  globalThis.document={activeElement:{isConnected:true,focus:()=>focusCount++},body:{append(){}},querySelectorAll:()=>[],createElement(){
-   const title={id:'modal-title'},cancel={},confirm={};
-   lastDialog={open:false,style:{removeProperty(){}},classList:{remove(){}},setAttribute(){},querySelectorAll:selector=>selector==='[data-close]'?[cancel]:[],querySelector:selector=>selector==='#modal-title'?title:selector==='[data-confirm-remove]'?confirm:null,showModal(){this.open=true;},close(){this.open=false;this.onclose();},remove(){this.removed=true;},cancel,confirm};return lastDialog;
+   const title={id:'modal-title'},cancel={},confirm={},all={};
+   lastDialog={open:false,style:{removeProperty(){}},classList:{remove(){}},setAttribute(){},querySelectorAll:selector=>selector==='[data-close]'?[cancel]:[],querySelector:selector=>selector==='#modal-title'?title:selector==='[data-confirm-remove]'?confirm:selector==='[data-remove-all]'?all:null,showModal(){this.open=true;},close(){this.open=false;this.onclose();},remove(){this.removed=true;},cancel,confirm,all};return lastDialog;
  }};
  try{
-   const canceled=confirmCourseRemoval({code:'CS0065',section:'AA1',title:'Intelligent Systems'});assert.equal(lastDialog.open,true);assert.ok(lastDialog.innerHTML.includes('CS0065 (AA1)'));await lastDialog.cancel.onclick();assert.equal(await canceled,false);
-   const accepted=confirmCourseRemoval({code:'CS0065',section:'AA1'});await lastDialog.confirm.onclick();assert.equal(await accepted,true);assert.equal(lastDialog.removed,true);assert.equal(focusCount,2);
+   const canceled=confirmCourseRemoval({code:'CS0065',section:'AA1',title:'Intelligent Systems'});assert.equal(lastDialog.open,true);assert.ok(lastDialog.innerHTML.includes('CS0065 (AA1)'));await lastDialog.cancel.onclick();assert.equal(await canceled,null);
+   const accepted=confirmCourseRemoval({code:'CS0065',section:'AA1'});await lastDialog.confirm.onclick();assert.equal(await accepted,'course');assert.equal(lastDialog.removed,true);assert.equal(focusCount,2);
  }finally{globalThis.document=previousDocument;globalThis.matchMedia=previousMedia;}
 });

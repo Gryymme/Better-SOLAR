@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Better SOLAR",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "minimum_chrome_version": "120",
   "description": "Your SOLAR academic records, organized and available offline. All academic data stays in your browser.",
   "permissions": [

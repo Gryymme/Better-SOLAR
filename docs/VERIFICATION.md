@@ -1,6 +1,6 @@
 # Verification and acceptance report
 
-Date: November 11, 2026. Updated for version **1.0.6**.
+Date: November 11, 2026. Updated for version **1.0.7**.
 
 This revision adds regression coverage for the reported nested SAF markup and UI corrections. See `CHANGELOG-1.0.1.md` for the issue-to-change mapping. All test results are recorded in the rebuilt `qa/` logs.
 
@@ -131,3 +131,18 @@ Manual acceptance for this revision:
 4. Check connection/Open Canvas order. Hover month/Today controls: only a same-sized flat highlight should appear; inspect arrow visibility and keyboard focus outlines.
 5. Click a visualizer course block, cancel and confirm it stays. Repeat and remove; every meeting for that course must disappear. Test Enter and Space, the list Remove action, no-slot blocks and data deletion while a confirmation is open.
 6. At 320/390/700 px, verify equal code/title font sizes, complete words on lines of at most 16 characters, shorter hour markers, full minute-accurate meeting times and no excess blank space beneath room labels. Words longer than 16 characters use a single ellipsis label instead of being split across lines; the complete original title/code remains in the accessible course description and confirmation.
+
+
+## 1.0.7 additions
+
+Automated checks cover three separate course-action results (selected/all/cancel); confirmation destination/checkbox behavior; external URL classification, Cancel, Proceed, persisted opt-out, restoration, cross-window preference changes, repeated-click suppression, normal/middle-click interception and storage failure rollback; theme-transition lifecycle, rapid reversal, first-load suppression and reduced motion; wider Remaining Slots columns and absence of character-breaking CSS; calendar ellipsis at word boundaries; OSES-only source rendering and live DOM discovery, including future terms, hidden history, non-image links and unrelated images; and deletion retaining only non-private theme/link preferences.
+
+The optional browser suite includes planned checks for block hover colors, removing all courses, absence of the old list, neutral dark surfaces, the theme-transition flag, and external-link Cancel/Proceed/remember/reset behavior. It stubs website opening to avoid navigating to real services during tests. Native Chromium checks remain blocked by the workspace's socket restrictions; no passing native screenshot review or authenticated collection is claimed.
+
+Manual acceptance for this revision:
+
+1. Open a populated visualizer and hover a green/red course. Inspect the color change, lift and keyboard focus. Click a block and exercise Cancel, Remove course and Remove all courses; verify counts and every meeting change correctly. The redundant list must be absent.
+2. Inspect Remaining Slots on full-width and side-by-side offerings, plus the individual-course dialog. Inspect headings, descriptions, calendar titles and narrow tables for complete-word wrapping. Very long single tokens may use existing component ellipsis rather than be split into separate lines.
+3. Try navigation, calendar event, Open Canvas, reminders and footer links. Cancel must open nothing. Proceed opens the chosen destination. Do not ask again suppresses future external prompts; Settings restores them. Repeat by keyboard and middle click, in the extension popup, after reopening, and in another app window.
+4. Switch Light → Dark → Light quickly and from another app window. Inspect the smooth colors, neutral dark page/cards/dialogs/borders and preserved intentional green/red/amber elements. Repeat with reduced motion.
+5. Collect Enrollment Reminders while signed in. Confirm only the displayed OSES term-specific Alabang PNG is downloaded and shown, including a different term filename. Other page images and download links must be ignored. Reopen offline, then delete data and confirm the image is removed while the non-private appearance/link preferences remain.
