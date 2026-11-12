@@ -1,6 +1,6 @@
 # Verification and acceptance report
 
-Date: November 12, 2026. Updated for version **1.0.8**.
+Date: November 12, 2026. Updated for version **1.1.0**.
 
 This revision adds regression coverage for the reported nested SAF markup and UI corrections. See `CHANGELOG-1.0.1.md` for the issue-to-change mapping. All test results are recorded in the rebuilt `qa/` logs.
 
@@ -161,3 +161,19 @@ Manual acceptance for this revision:
 3. Compare Dashboard, Schedule and Assessment and the visualizer using two-way/three-way, nested and chain overlaps. Blocks sharing times must occupy different lanes; later unrelated meetings and other days must keep full column width. Adjacent meetings must not be treated as overlapping.
 4. Resize shared blocks to narrow widths. Verify `CCS0001` → `CCS-` / `001` and `GED0004A` → `GED-` / `004A` when wrapping is needed. Original codes in records and course-action dialogs must remain unchanged.
 5. Verify shared block titles contain at most 20 displayed characters including ellipsis. Code/title fonts must match; full displayed words must fit without character-level wrapping. An individual long word may exceed the earlier 16-character line preference, but must stay on one fitted line. Full minute-accurate times, room labels, hover/removal and mobile content-fitted heights must remain.
+
+
+## 1.1.0 additions
+
+Automated coverage now includes every weekday-to-half mapping; initial horizontal placement; persistence after resizing; cue visibility gating, direction, smooth return and once-per-view behavior; reduced-motion suppression; cancellation on interaction; arrow-key paging; observer/listener cleanup; time labels outside the horizontal viewport; six columns inside the day track; all four mobile course fields at fixed regular type; six complete course information fields and the requested subtitle; and compound checkbox controls with separate accessible names/descriptions.
+
+Course details continue to preserve original codes/titles, known numeric credits and the clicked meeting's exact time/day/room. Offering enrichment does not invent missing credits. Both read-only and editable timetable blocks retain keyboard access and data-deletion cleanup. The visualizer still supports overlaps, no-slot warnings, selected/all removal and consent preferences.
+
+The optional browser suite includes three-column track-width checks, stable time-rail position after horizontal scrolling, bold/larger left-side values with smaller right-side labels, subtitle checks, and checkbox centering/alignment. Native Chromium remains blocked by the workspace socket restriction; passing native visual review is not claimed.
+
+Manual acceptance for this release:
+
+1. On 320/390/700 px windows, verify exactly three day columns fit beside the fixed hour rail. Compare code/title/time/room information and block heights with the regular timetable. Swipe both ways and verify the labels do not move horizontally and the page itself does not overflow.
+2. Check Sunday, Monday, Tuesday and Wednesday default to the first half; Thursday, Friday and Saturday default to the second half. Check the visible-entry cue moves slightly toward the hidden days and returns. Drag or tap during the cue, use reduced motion, resize, and exercise Arrow Left/Right and Home/End.
+3. Open course information from Dashboard, Assessment and the visualizer. Values must align left and appear larger/bolder than the labels on their right. Verify the subtitle and full original field values. Only the visualizer should expose removal controls.
+4. Inspect external confirmation and Settings on wide and narrow windows. The checkbox must center vertically against both text lines; the title/help text starts at one common left edge. In wide Settings, Ask before opening external websites must remain one line. Consent/opt-out/reset and data deletion must still work.

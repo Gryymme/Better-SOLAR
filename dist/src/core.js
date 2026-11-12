@@ -19,6 +19,10 @@ export function occurrences(course) {
  ds.forEach((d,i)=>{const t=interval(ts[i]),days=dayTokens(d); if(!t||!days.length){warnings.push(`${course.code}: Unrecognized meeting ${d} ${ts[i]}; inspect the source schedule.`);return;}days.forEach(day=>out.push({...t,day,room:rs[i],course}));});return {items:out,warnings};
 }
 export const courseId = c => JSON.stringify([c.code,c.section,c.days??c.day,c.time,c.room]);
+export function enrichCourseOfferings(courses,groups){
+ const curriculum=new Map((groups||[]).flatMap(group=>group.courses||[]).map(course=>[course.code,course]));
+ return courses.map(course=>({...course,title:clean(course.title)?course.title:curriculum.get(course.code)?.title||course.code,credits:clean(course.credits)?course.credits:curriculum.get(course.code)?.credits??'',_id:courseId(course)}));
+}
 export function conflicts(existing,added,{allowOverlap=false}={}) {
  const errors=[],seen=new Set(existing.map(courseId)),all=[...existing];
  for(const c of added){if(seen.has(courseId(c))){errors.push(`${c.code} (${c.section}) is already selected.`);continue;}seen.add(courseId(c));

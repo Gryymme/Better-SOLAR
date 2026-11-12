@@ -13,7 +13,7 @@ function dialogs(){
 test('Course actions offer selected course, all courses, or Cancel as distinct decisions',async()=>{
  const f=dialogs(),course={code:'CS0065',section:'AA1'};
  try{
-  let decision=confirmCourseRemoval(course,{count:4});assert.ok(f.last.innerHTML.includes('all 4 courses'));assert.ok(f.last.innerHTML.includes('Remove all courses'));await f.last.cancel.onclick();assert.equal(await decision,null);
+  let decision=confirmCourseRemoval(course,{count:4});assert.ok(f.last.innerHTML.includes('Course code')&&!f.last.innerHTML.includes('Remove this course and all its meetings'));assert.ok(f.last.innerHTML.includes('Remove all courses'));await f.last.cancel.onclick();assert.equal(await decision,null);
   decision=confirmCourseRemoval(course,{count:4});await f.last.controls['[data-confirm-remove]'].onclick();assert.equal(await decision,'course');
   decision=confirmCourseRemoval(course,{count:4});await f.last.controls['[data-remove-all]'].onclick();assert.equal(await decision,'all');
  }finally{f.restore();}

@@ -35,14 +35,12 @@ test('Narrow course codes separate letters and numbers using the requested displ
  assert.deepEqual(courseCodeLines('CCS0001',80,measure),['CCS0001']);assert.deepEqual(courseCodeLines('MATH1234',24,measure),['MATH-','1234']);
  const doc=documentFromHTML(schedule([course('GED0004A','07:00-09:00')]));assert.equal(doc.querySelector('.course-code').getAttribute('data-course-text'),'GED0004A');
 });
-test('A shared font fits full title words into narrow lanes without splitting or replacing their letters',()=>{
- const title=sharedMeetingTitle('Intelligent Systems');const measure=text=>text.length*6;
- const layout=courseTextLayout(['CCS0001',title],24,measure,12);assert.deepEqual(layout.lines[0],['CCS-','001']);assert.deepEqual(layout.lines[1],['Intelligent','Systems']);
- assert.ok(layout.fontSize<12);for(const line of layout.lines.flat())assert.ok(measure(line)*layout.fontSize/12<=24.1);
+test('Shared desktop blocks retain the regular text size, show a wrapped code and suppress the title',()=>{
+ const layout=courseTextLayout(['CCS0001','Intelligent Systems'],80,text=>text.length*6,12,{shared:true});assert.equal(layout.fontSize,12);assert.deepEqual(layout.lines,[['CCS-','001'],[]]);
  assert.equal(sharedMeetingTitle('Short title'),'Short title');assert.ok(Array.from(sharedMeetingTitle('A very long course title that exceeds the cap')).length<=20);
 });
 test('External checkbox is below the divider in the same footer as Cancel and Proceed, outside the scrolling body',()=>{
  const doc=documentFromHTML(modalMarkup('Open website?',externalConfirmationMarkup(new URL('https://example.invalid')),externalConfirmationFooter()));
  assert.equal(doc.querySelector('.modal-body [data-remember-external]'),null);assert.ok(doc.querySelector('.modal-footer [data-remember-external]'));assert.ok(doc.querySelector('.modal-footer [data-close]'));assert.ok(doc.querySelector('.modal-footer [data-proceed-external]'));
- const footer=doc.querySelector('.modal-footer');assert.equal(footer.children[0].tagName,'LABEL');assert.equal(footer.children[1].getAttribute('class'),'external-confirm-actions');
+ const footer=doc.querySelector('.modal-footer');assert.equal(footer.children[0].getAttribute('class'),'external-confirm-preference');assert.equal(footer.children[1].getAttribute('class'),'external-confirm-actions');
 });

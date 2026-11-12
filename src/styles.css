@@ -373,7 +373,7 @@ dialog[open]{transform-origin:center center}
  .site-header:not(.minimized) .brand img{width:44px;height:44px}
  .week-grid{--time-gutter:22px}
  .hour-line span{font-size:7px;letter-spacing:0;width:calc(var(--time-gutter) - 1px)}
- .course-block{height:var(--compact-course-height,auto)!important}
+ .course-block{height:auto}
  .course-block .course-code,.course-block .course-title{font-size:var(--course-font-size,9px)}
  .course-block .course-text-line{white-space:pre}
 }
@@ -411,3 +411,54 @@ dialog[open]{transform-origin:center center}
  .external-confirmation .modal-footer .checkbox-label{font-size:11px;gap:6px}
  .external-confirm-actions{gap:6px}.external-confirm-actions button{font-size:11px;padding:7px 8px;min-height:36px}
 }
+
+/* 1.1.0: desktop-density mobile schedule pages and aligned dialog controls. */
+.schedule-frame{overflow:hidden}
+.week-grid{display:grid;grid-template-columns:var(--time-gutter) minmax(0,1fr);--time-gutter:64px;--course-font-size:12px;--meeting-font-size:10px}
+.week-time-rail{grid-column:1;min-width:0;background:var(--surface);z-index:5}
+.week-time-rail-header,.week-header{height:44px;border-bottom:1px solid var(--border);background:var(--surface)}
+.week-time-rail-body{position:relative}
+.hour-label{position:absolute;left:0;right:0;height:1px}
+.hour-label span{position:absolute;top:-8px;left:0;right:0;text-align:right;padding-right:6px;font-size:11px;line-height:16px;color:var(--muted);white-space:nowrap}
+.week-days-viewport{grid-column:2;min-width:0;overflow-x:hidden;overflow-y:hidden;overscroll-behavior-x:contain;touch-action:pan-x pan-y}
+.week-days-track{position:relative;width:100%;min-width:0}
+.week-head-days{margin-left:0}
+.week-days-track .hour-line{left:0;right:0}
+.week-days-track .week-meetings{inset:0}
+.week-day{font-size:12px;padding:12px 2px}.day-full{display:inline}.day-short{display:none}
+.course-block{height:auto}
+.course-block .course-code,.course-block .course-title{display:block;font-size:var(--course-font-size);font-weight:700;line-height:1.2}
+.course-block.shared-time .course-title{display:none}
+.course-block .meeting-time,.course-block .meeting-room{font-size:var(--meeting-font-size);font-weight:400;line-height:1.3;white-space:normal;letter-spacing:normal}
+.course-block .meeting-time-line,.course-block .meeting-room-line{display:block;font:inherit;white-space:normal}
+.course-block.interactive{cursor:pointer;transition:background-color .18s,color .18s,box-shadow .18s,transform .18s}
+.course-block.interactive:hover{filter:none;background:var(--course-hover);transform:translateY(-2px);box-shadow:0 4px 12px #193b2030}
+.course-block.interactive.no-slots:hover{background:var(--course-full-hover)}.course-block.interactive:active{transform:translateY(0)}
+.modal-title-group{min-width:0}.modal-title-group h2{margin:0}.modal-subtitle{margin:6px 0 0;font-size:12px;line-height:1.5;color:var(--muted)}
+.course-info-fields{margin:0}.course-info-fields>div{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:baseline;gap:20px;margin-bottom:17px}
+.course-info-fields dt{grid-column:2;grid-row:1;font-size:12px;font-weight:400;text-align:right;color:var(--muted);max-width:145px}
+.course-info-fields dd{grid-column:1;grid-row:1;margin:0;font-size:17px;font-weight:700;text-align:left;min-width:0;line-height:1.5}
+.checkbox-setting,.settings-section label.checkbox-setting{display:grid;grid-template-columns:18px minmax(0,1fr);align-items:center;gap:10px;max-width:none;width:100%;margin:0;font-weight:400}
+.checkbox-setting input{width:18px;height:18px;min-height:18px;padding:0;margin:0;align-self:center;accent-color:var(--brand)}
+.checkbox-setting-copy{min-width:0;text-align:left}
+.checkbox-setting-title{display:block;font-size:14px;font-weight:500;line-height:1.5}
+.checkbox-setting-hint{display:block;font-size:12px;line-height:1.5;margin-top:4px}
+.external-confirmation .modal-footer{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center}
+.external-confirm-preference{min-width:0}
+.external-confirm-preference .checkbox-setting-title{font-size:13px}
+.external-confirm-preference .checkbox-setting-hint{font-size:11px}
+@media(max-width:700px){
+ .week-grid{--time-gutter:56px;--course-font-size:12px;--meeting-font-size:10px}
+ .week-days-viewport{overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:thin;scrollbar-color:var(--muted) var(--surface)}
+ .week-days-viewport::-webkit-scrollbar{height:6px}.week-days-viewport::-webkit-scrollbar-thumb{background:var(--muted);border-radius:8px}.week-days-viewport::-webkit-scrollbar-track{background:var(--surface)}
+ .week-days-track{width:200%}
+ .week-day:nth-child(1),.week-day:nth-child(4){scroll-snap-align:start}
+ .week-header{height:44px}.week-day{font-size:12px;padding:12px 2px}.day-full{display:inline}.day-short{display:none}
+ .hour-label span{font-size:10px}
+ .course-block{padding:7px 5px}
+ .course-block .course-code,.course-block .course-title,.course-block.shared-time .course-title{display:block;font-size:var(--course-font-size)}
+ .course-info-fields>div{gap:12px;margin-bottom:14px}.course-info-fields dd{font-size:15px}.course-info-fields dt{font-size:11px;max-width:105px}
+ .checkbox-setting-title{font-size:12px}.checkbox-setting-hint{font-size:11px}
+ .external-confirm-preference .checkbox-setting-title{font-size:11px}.external-confirm-preference .checkbox-setting-hint{font-size:10px}
+}
+@media(prefers-reduced-motion:reduce){.course-block.interactive{transition:none}.course-block.interactive:hover{transform:none}}

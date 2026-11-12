@@ -4,6 +4,20 @@ A local-first companion for FEU Alabang SOLAR, built as a Chrome/Edge Manifest V
 
 **Delivery status:** Implementation and automated fixture tests are included. A real signed-in SOLAR scrape, real Canvas connection, browser layout review, and installed-extension acceptance checks still need to be performed. This environment could not launch Chromium. See [Verification](docs/VERIFICATION.md) for the precise scope of testing and remaining checks.
 
+## Version 1.1.0
+
+Phone timetables now retain the regular six-day schedule at desktop-density type, showing three day columns at a time. Swipe left for later days or right for earlier days; the hour labels stay fixed outside the scrolling day area. Sunday through Wednesday initially shows Monday–Wednesday. Thursday through Saturday initially shows Thursday–Saturday. Arrow keys, Home and End also move between halves when the day area is focused.
+
+The table gives a short horizontal nudge when it first becomes visible, then returns to its selected half. Interaction cancels that cue, and reduced-motion mode disables it. Day positions survive same-view rerenders and resizing. Mobile blocks retain code, title, time and room, including titles on shared-time blocks. Their timeline heights and typography match the regular schedule instead of squeezing six narrow columns into the phone screen.
+
+Course information now places larger, bold, left-aligned values on the left and smaller, regular-weight labels on the right. The header includes **Displaying details for the selected course.** Both external-website checkboxes center against their full title/help text group, with aligned text and no artificial 260 px width limit in Settings.
+
+See [the full change log](docs/CHANGELOG-1.1.0.md).
+
+## Version 1.0.9
+
+Timetables use consistent code/title and time/room fonts. Every block can open six complete course-information fields, with removal actions only in the visualizer. Offering credits can come from the collected curriculum when the source omits them. External consent retains its restoration hint under the checkbox title. Version 1.1.0 extends that layout and restores all four course fields in the wider mobile timetable.
+
 ## Version 1.0.8
 
 The external-website dialog now puts **Do not ask again** below the divider, in the same footer row as **Cancel** and **Proceed**, including compact phone layouts.
@@ -135,7 +149,7 @@ Open **Courses Offered**, submit a term/year, then choose **Open Schedule Creato
 - Zero-slot or unknown-slot courses stay selectable and highlighted in red. Adding them shows a warning; confirmation adds red blocks to the visualizer. Back keeps the selection without adding it.
 - **Add a Block Section** checks every course in the block before adding the whole block.
 - Overlapping meeting times are allowed, including overlaps against courses already in the visualizer and within a newly selected block. The shared timetable places them in separate side-by-side lanes. Exact duplicate selections and invalid meeting pairing still reject the selection atomically.
-- Click a course block to open Course actions. Remove course deletes every meeting of that selected course; Remove all courses clears the weekly visualizer. Cancel changes nothing. Keyboard users can focus a block and press Enter or Space. No separate course list is displayed beneath the timetable.
+- Click a course block to open Course information. Remove selected course deletes every meeting of that selected course; Remove all courses clears the weekly visualizer. Cancel changes nothing. Keyboard users can focus a block and press Enter or Space. Dashboard and Assessment offer read-only course details. No separate course list is displayed beneath the timetable.
 - Closing/reopening the visualizer retains its state. The draft uses that application window's session storage while the course page is open. Leaving/reloading the page or choosing a different offered term clears the draft; returning requires selecting term/year again.
 
 Course-offering tables do not provide course titles. The visualizer looks titles up from the cached curriculum where possible; otherwise it displays the source course code. It never invents a title. It does not enroll you in courses or send a registration request.

@@ -4,7 +4,7 @@ import {slotWarnings,conflicts} from '../src/core.js';
 import {offeringRows,schedule,slotWarningBody,navigation,enrollmentReminders} from '../src/ui.js';
 import {collectionReport} from '../src/cache-report.js';
 import {dialogFrames} from '../src/motion.js';
-import {wrapCourseText,courseFontSize} from '../src/schedule-layout.js';
+import {wrapCourseText,courseTextLayout} from '../src/schedule-layout.js';
 const parserSource=readFileSync('scraper/dom.js','utf8'),origin='https://solar.feualabang.edu.ph';
 function remindersDOM(html,fetch){const context={document:documentFromHTML(html),location:{origin,href:origin+'/enrollment/reminders',pathname:'/enrollment/reminders'},URL,crypto,fetch,AbortSignal,Uint8Array,btoa};vm.createContext(context);vm.runInContext(parserSource,context);return context.BetterSolarDOM;}
 const course=(code,remaining,time='07:00-08:00')=>({code,remaining,time,section:'AA1',days:'M',room:'703'});
@@ -67,6 +67,6 @@ test('Phone title lines keep complete words within sixteen characters and font s
  const text='CS ELECTIVE - INTELLIGENT SYSTEMS',lines=wrapCourseText(text,1000,value=>value.length);
  assert.ok(lines.every(line=>Array.from(line).length<=16));assert.equal(lines.join(' '),text);
  assert.deepEqual(wrapCourseText('CS0065',1000,value=>value.length),['CS0065']);
- assert.equal(courseFontSize(['W'.repeat(16)],48,value=>value.length*6,9),4.5);
- assert.equal(courseFontSize(['CS0065'],80,value=>value.length*5,9),9);
+ assert.equal(courseTextLayout(['CS1','Title'],48,value=>value.length*6,12).fontSize,12);
+ assert.equal(courseTextLayout(['CS1','Title'],80,value=>value.length*5,12).fontSize,12);
 });
