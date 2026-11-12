@@ -1,3 +1,4 @@
+import {extension as chrome,watchProgress} from './webextension.js';
 import {allRecords} from './db.js';
 import {initializeExternalLinks} from './external-links.js';
 import {initTheme} from './theme.js';
@@ -25,14 +26,14 @@ function dismissCache(value){cacheDismissed=value;localStorage.setItem('betterSo
 let minimized=false,scrollFrame=0,dataEpoch=0,cacheExpanded=false,creatorTransition=false,creatorMotion=false;
 function updateHeader(){minimized=headerMinimized(scrollY,minimized);document.querySelector('#nav')?.classList.toggle('minimized',minimized);}
 let records=[],feed,progress={},route='dashboard',demo=false,selected={},creatorOpen=false,creator=[],offerFilter={q:'',section:'',days:[]},viewDate=new Date(),calendarItems=[];
-const isExtension=!!globalThis.chrome?.runtime?.id;
+const isExtension=!!chrome?.runtime?.id;
 const categoryFor={'balance-summary':'Account Balance Summary',saf:'Assessment',grades:'Grades','course-list':'Course Offerings'};
 const rec=c=>records.find(r=>r.category===c),recs=c=>records.filter(r=>r.category===c).sort((a,b)=>b.year.localeCompare(a.year)||+b.term-+a.term);
 const target=()=>{const s=selected[route];return s?records.find(r=>r.category===categoryFor[route]&&r.term===s.term&&r.year===s.year):null;};
 function routeFromHash(){const value=location.hash.slice(1).split('?')[0];return pages[value]?value:'dashboard';}
 function stateLine(){return `${cacheDismissed?'':collectionReport(records,progress,{expanded:cacheExpanded,demo,online:navigator.onLine,dismissible:true})}${!records.length&&progress.state!=='running'?'<p><button data-action="demo">Explore demo</button></p>':''}${demo?'<p><button data-action="leave-demo">Leave demo</button></p>':''}`;}
 
-function heading(){return pageHeading(route,{firstName:rec('User Profile')?.data?.values?.['First Name']||'',collecting:progress.state==='running'});}
+function heading(){return pageHeading(route,{firstName:rec('User Profile')?.data?.values?.['First Name']||'',collecting:progress.state==='running',hasData:!demo&&records.some(record=>record.data)});}
 function profilePage(){const r=rec('User Profile');if(!r?.data)return recordStatus(r)+empty();const v=r.data.values,p=enrollmentPeriod(r.data.enrollmentHeading),student=['Student Number','First Name','Middle Name','Last Name','Personal Email Address','School Email Address','Citizenship','Program','Curriculum'];const y=v['Year Level'],n=y?.match(/\d+/)?.[0];return `<div class="grid-two"><section class="card"><h2 class="section-title"><span>${icon('book')}</span>Student Information</h2>${pairs(student.map(k=>[k,v[k==='Curriculum'?'Curriculum Code':k]]))}</section><section class="card"><h2 class="section-title"><span>${icon('check')}</span>Enrollment Status</h2>${pairs([['Current Term',p.term?ordinal(+p.term)+' term':''],['Current School Year',p.year?'SY '+yearLabel(p.year):''],['Year Level',n?ordinal(+n)+' Year':y],...['Registration Status','Student Type','Scholarship'].map(k=>[k,v[k]])])}</section></div>${recordStatus(r)}`;}
 function groupLabel(h){const nums={first:1,second:2,third:3,fourth:4,fifth:5,sixth:6};const y=h.match(/(first|second|third|fourth|fifth|sixth|\d+(?:st|nd|rd|th)?)\s*year/i),t=h.match(/(\d+)(?:st|nd|rd|th)?\s*term/i);return y&&t?`${ordinal(nums[y[1].toLowerCase()]||parseInt(y[1]))} year - ${ordinal(+t[1])} Term`:h;}
 function curriculumPage(){const r=rec('Curriculum');return r?.data?`<section class="card">${r.data.groups.map(g=>`<section class="curriculum-group"><h2>${esc(groupLabel(g.heading))}</h2>${curriculumTable(g.courses)}</section>`).join('')||empty('The source returned an empty curriculum.')}</section>${recordStatus(r)}`:recordStatus(r)+empty();}
@@ -151,4 +152,5 @@ root.innerHTML=`<main class="app-main" aria-busy="true"><div class="skeleton"></
 await initTheme();await initializeExternalLinks();
 void initializeFonts().then(()=>{syncSchedules();syncCalendarTitles();syncTablePeeks();});
 try{await load();sessionStorage.removeItem('creator');render({motion:'launch'});}catch(error){root.innerHTML=`<main class="app-main"><h1>Local records could not be opened.</h1><p>${esc(error.message)}</p><p>Check available device storage and reload the extension.</p></main>`;}
-if(isExtension)chrome.storage.onChanged.addListener(async(changes,area)=>{if(area==='local'&&changes.scrapeProgress&&!demo){const epoch=dataEpoch,nextRecords=await allRecords();if(epoch!==dataEpoch)return;if(progress.state!=='running'&&changes.scrapeProgress.newValue?.state==='running')dismissCache(false);progress=changes.scrapeProgress.newValue||{};records=nextRecords;render();}});
+if(isExtension){void chrome.runtime.sendMessage({type:'PROGRESS'}).catch(()=>{});}
+if(isExtension)watchProgress(async(changes,area)=>{if(area==='local'&&changes.scrapeProgress&&!demo){const epoch=dataEpoch,nextRecords=await allRecords();if(epoch!==dataEpoch)return;if(progress.state!=='running'&&changes.scrapeProgress.newValue?.state==='running')dismissCache(false);progress=changes.scrapeProgress.newValue||{};records=nextRecords;render();}});

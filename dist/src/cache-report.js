@@ -1,7 +1,7 @@
 import {esc,cacheFeedback,icon} from './ui.js';
 export function collectionReport(records,progress={}, {expanded=false,demo=false,online=true,dismissible=false}={}){
- const cached=records.filter(record=>record.data),last=records.map(record=>record.scrapedAt).filter(Boolean).sort().at(-1);
- let summary=demo?'Demonstration — synthetic data only':cached.length?`${cached.length} locally cached datasets${last?' · Last collected '+new Date(last).toLocaleString():''}`:'No academic data collected yet';
+ const cached=records.filter(record=>record.data),last=records.map(record=>record.lastCheckedAt||record.scrapedAt).filter(Boolean).sort().at(-1);
+ let summary=demo?'Demonstration — synthetic data only':cached.length?`${cached.length} locally cached datasets${last?' · Last checked '+new Date(last).toLocaleString():''}`:'No academic data collected yet';
  if(!online)summary+=' · Offline';
  const collecting=progress.state==='running',errors=progress.errors||[];
  const detail=collecting?`<p class="collection-detail">Collecting ${esc(progress.current||'SOLAR records')} · ${esc(progress.completed||0)}/${esc(progress.total||0)} steps</p>`:'';

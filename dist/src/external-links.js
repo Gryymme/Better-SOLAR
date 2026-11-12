@@ -1,6 +1,7 @@
+import {extension as chrome} from './webextension.js';
 import {confirmExternalNavigation,toast} from './ui.js';
 const KEY='confirmExternalLinks';let ask=true,initialized=false,pending=false;
-const extensionStorage=()=>globalThis.chrome?.storage?.local;
+const extensionStorage=()=>chrome?.storage?.local;
 export const shouldConfirmExternalLinks=()=>ask;
 function applyPreference(value){ask=value!==false&&value!=='false';if(typeof document!=='undefined')document.querySelectorAll('[data-external-confirm]').forEach(input=>input.checked=ask);}
 export async function setExternalLinkConfirmation(value){
@@ -12,7 +13,7 @@ export function externalDestination(href,base){
  try{const url=new URL(href,base),current=new URL(base);return ['https:','http:'].includes(url.protocol)&&url.origin!==current.origin?url:null;}catch{return null;}
 }
 function openWebsite(url){
- if(globalThis.chrome?.runtime?.id&&chrome.tabs?.create)return chrome.tabs.create({url:url.href,active:true});
+ if(chrome?.runtime?.id&&chrome.tabs?.create)return chrome.tabs.create({url:url.href,active:true});
  const opened=window.open(url.href,'_blank','noopener,noreferrer');
  // noopener can intentionally return null even when a new tab was opened.
  return opened;
@@ -32,7 +33,7 @@ export async function visitExternalWebsite(url,{prompt=confirmExternalNavigation
 export async function initializeExternalLinks(){
  if(initialized)return;initialized=true;
  try{const value=extensionStorage()?(await chrome.storage.local.get(KEY))[KEY]:localStorage.getItem(KEY);applyPreference(value);}catch{applyPreference(true);}
- if(globalThis.chrome?.storage?.onChanged)chrome.storage.onChanged.addListener((changes,area)=>{if(area==='local'&&changes[KEY])applyPreference(changes[KEY].newValue);});
+ if(chrome?.storage?.onChanged)chrome.storage.onChanged.addListener((changes,area)=>{if(area==='local'&&changes[KEY])applyPreference(changes[KEY].newValue);});
  else addEventListener('storage',event=>{if(event.key===KEY)applyPreference(event.newValue);});
  const intercept=event=>{
    if(event.defaultPrevented||(event.type==='auxclick'&&event.button!==1))return;

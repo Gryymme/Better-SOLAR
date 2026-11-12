@@ -10,7 +10,7 @@
  const aliases={code:['coursecode','course','courses','code'],title:['coursetitle','title','description'],section:['coursesection','section'],credits:['credits','units','creditunits'],days:['days','day'],time:['time','schedule'],room:['room','rooms'],size:['classsize','size'],remaining:['remainingslots','remaining','slots'],midterm:['midtermgrade','midterm'],final:['finalgrade','final'],lab:['laboratorycorequisite','laboratory','corequisite'],prerequisite:['prerequisite','prerequisites'],paid:['payments','amountpaid','payment'],or:['ornumber','or','officialreceiptnumber'],date:['date','paymentdate'],mode:['mode','paymentmode']};
  function match(label,field){const n=norm(label);return aliases[field].some(a=>n===a);}
  function tableFor(required,preferred){const first=preferred?document.querySelector(preferred):null;if(first)return first;return [...document.querySelectorAll('table')].find(t=>[...t.rows].some(r=>required.every(f=>cells(r).some(c=>match(text(c),f)))));}
- function rows(table,fields,{allowGroups=false}={}){if(!table)throw Error('Expected table is missing. The portal structure may have changed.');const list=[...table.rows];const idx=list.findIndex(r=>fields.filter(f=>['code','title','paid','or'].includes(f)).every(f=>cells(r).some(c=>match(text(c),f))));if(idx<0)throw Error('Expected table headings were not found. No data was replaced.');const heads=cells(list[idx]).map(text);const map=fields.map(f=>heads.findIndex(h=>match(h,f)));if(map.some(n=>n<0))throw Error('Required table columns are missing: '+fields.filter((f,i)=>map[i]<0).join(', '));const result=[];let group='';for(const r of list.slice(idx+1)){const cs=cells(r);if(!cs.length)continue;if(cs.length===1&&cs[0].colSpan>=fields.length){if(allowGroups){group=text(cs[0]);result.push({groupHeading:group});}continue;}if(cs.length<=Math.max(...map))continue;const values=cs.map(text);if(!values.some(Boolean)||/^(no (records|data|courses|results)|nothing found)/i.test(values.join(' ')))continue;const item=Object.fromEntries(fields.map((f,i)=>[f,values[map[i]]]));item.rawValues=values;if(allowGroups)item.group=group||'Unspecified year and term';result.push(item);}return result;}
+ function rows(table,fields,{allowGroups=false}={}){if(!table)throw Error('Expected table is missing. The portal structure may have changed.');const list=[...table.rows];const idx=list.findIndex(r=>fields.filter(f=>['code','title','paid','or'].includes(f)).every(f=>cells(r).some(c=>match(text(c),f))));if(idx<0)throw Error('Expected table headings were not found. No data was replaced.');const heads=cells(list[idx]).map(text);const map=fields.map(f=>heads.findIndex(h=>match(h,f)));if(map.some(n=>n<0))throw Error('Required table columns are missing: '+fields.filter((f,i)=>map[i]<0).join(', '));const result=[];let group='';for(const r of list.slice(idx+1)){const cs=cells(r);if(!cs.length)continue;if(r.parentElement?.tagName==='TFOOT'&&/^total\b/i.test(text(cs[0])))continue;if(/^total\s+(?:units|credits)\s*:?$/i.test(text(cs[0])))continue;if(cs.some(cell=>/^(?:loading|please wait|fetching)(?:[ .…]*)$/i.test(text(cell))))throw Error('Table rows are still loading. Previous data was kept.');if(cs.length===1&&cs[0].colSpan>=fields.length){if(allowGroups){group=text(cs[0]);result.push({groupHeading:group});}else if(text(cs[0])&&!/^(no (records|data|courses|results)|nothing found)/i.test(text(cs[0])))throw Error('An unexpected table row was returned. Previous data was kept.');continue;}if(cs.every(c=>c.tagName==='TH'))continue;if(cs.length<=Math.max(...map)){if(cs.some(c=>text(c)))throw Error('A table row is incomplete. Previous data was kept.');continue;}const values=cs.map(text);if(!values.some(Boolean)||/^(no (records|data|courses|results)|nothing found)/i.test(values.join(' ')))continue;const item=Object.fromEntries(fields.map((f,i)=>[f,values[map[i]]]));if(('code' in item&&!item.code)||('paid' in item&&!item.paid))throw Error('A required table row value is missing. Previous data was kept.');item.rawValues=values;if(allowGroups)item.group=group||'Unspecified year and term';result.push(item);}return result;}
  function pairs(table){if(!table)return {};const result={};for(const row of table.rows){const c=cells(row);if(c.length>=2){const label=text(c[0]).replace(/:\s*$/,'');if(label&&!/^(particulars|label)$/i.test(label))result[label]=c.slice(1).map(text).join(' ');}}return result;}
  function pick(map,names){for(const name of names){const entry=Object.entries(map).find(([k])=>norm(k)===norm(name));if(entry)return entry[1];}return '';}
  const emptyText=()=>/no (records|results|data|courses)|not available|not enrolled|no assessment/i.test(text(document.body));
@@ -61,12 +61,13 @@
    if(selection){summary.Term||=selection.term;summary['School Year']||=selection.year;}
    return {summary,rawSummary};
  }
- function extract(category){guard();const meta=discover();let data;if(emptyText()&&!document.querySelector('table')&&['Course Offerings','Grades','Assessment'].includes(category)){return {data:{courses:[],summary:{},fees:[],totalCredits:0,empty:true},discovery:meta};}
+ const baseTableFor=tableFor;
+ function extract(category,override){const tableFor=(required,preferred)=>override||baseTableFor(required,preferred);guard();const meta=discover();let data;if(emptyText()&&!document.querySelector('table')&&['Course Offerings','Grades','Assessment'].includes(category)){return {data:{courses:[],summary:{},fees:[],totalCredits:0,empty:true},discovery:meta};}
  if(category==='User Profile'){
  const maps=[...document.querySelectorAll('table.profile-table,.profile-table table,table')].map(pairs);const merged=Object.assign({},...maps);const names=['Student Number','First Name','Middle Name','Last Name','Personal Email Address','School Email Address','Citizenship','Program','Curriculum Code','Year Level','Registration Status','Student Type','Scholarship'];const values=Object.fromEntries(names.map(n=>[n,pick(merged,[n,n==='Personal Email Address'?'Personal Email':n,n==='School Email Address'?'School Email':n])]));
  if(!values['Student Number']||!values['First Name'])throw Error('Student profile fields are missing. Check the authenticated profile page.');
  const heading=[...document.querySelectorAll('h1,h2,h3,h4,h5,h6,.card-header,.panel-heading,legend,strong,b')].map(text).filter(t=>/Enrollment Status.*Term/i.test(t)).sort((a,b)=>a.length-b.length)[0]||text(document.body).match(/Enrollment Status\s*:\s*Term\s*\d+\s*(?:SY|School Year)\s*\d{4}[-\s]?\d{4}/i)?.[0]||'';
- if(!heading)throw Error('Enrollment Status heading is missing. Profile was not replaced.');data={values,enrollmentHeading:heading};
+ if(!heading)throw Error('Enrollment Status heading is missing. Profile was not replaced.');data={values,enrollmentHeading:heading,fieldsPresent:names.filter(name=>Object.keys(merged).some(label=>[name,name==='Personal Email Address'?'Personal Email':name,name==='School Email Address'?'School Email':name].some(alias=>norm(alias)===norm(label))))};
  }else if(category==='Curriculum'){
  const list=rows(tableFor(['code','title','credits']),['code','title','credits','lab','prerequisite'],{allowGroups:true});const groups=[];for(const r of list){if(r.groupHeading){groups.push({heading:r.groupHeading,courses:[]});continue;}let g=groups.at(-1);if(!g){g={heading:r.group,courses:[]};groups.push(g);}g.courses.push(r);}data={groups,empty:!groups.some(g=>g.courses.length)};
  }else if(category==='Course Offerings'){
@@ -81,13 +82,101 @@
  }else if(category==='Assessment'){
  const table=tableFor(['code','title','credits','days'],'.assessment_schedule-container .assessment_schedule,table.assessment_schedule');const courses=rows(table,['code','title','section','credits','days','time','room']);
  const candidates=feeTables(),fees=candidates.flatMap(c=>c.rows);
- if(!fees.length&&!emptyText())throw Error('Assessment fee rows are missing. No populated fee table was found after submission; retry this term once SOLAR finishes loading.');
- if(fees.length&&!fees.some(f=>f.value)&&!emptyText())throw Error('Assessment fee values are still loading. Retry once SOLAR finishes loading this term.');
+ if(!fees.length)throw Error('Assessment fee rows are missing. No populated fee table was found after submission; retry this term once SOLAR finishes loading.');
+ if(fees.some(f=>!f.value))throw Error('Assessment fee values are still loading. Retry once SOLAR finishes loading this term.');
  const {summary,rawSummary}=assessmentSummary(table,candidates);
- if(!summary['Student Number']&&!emptyText())throw Error('SAF student number could not be mapped (Student # / Student Number).');
+ if(!summary['Student Number'])throw Error('SAF student number could not be mapped (Student # / Student Number).');
  data={summary,rawSummary,courses,fees,totalCredits:courses.reduce((sum,c)=>sum+(Number(c.credits)||0),0),empty:!courses.length&&!fees.length};
  }else throw Error('Unknown category');
  return {data,discovery:meta};
+ }
+
+ // A snapshot is committed only after all visible pagination has been traversed,
+ // declared totals agree and two consecutive complete reads are stable.
+ const delay=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+ const visible=element=>{for(let node=element;node;node=node.parentElement)if(node.hidden||node.getAttribute?.('aria-hidden')==='true'||/display\s*:\s*none|visibility\s*:\s*hidden/i.test(node.getAttribute?.('style')||''))return false;return typeof element.getClientRects!=='function'||element.getClientRects().length>0;};
+ function primaryTables(category){
+  const required={'Course Offerings':['code','section','remaining'],Grades:['code','title','midterm','final'],Curriculum:['code','title','credits'],Assessment:['code','title','credits','days']};
+  if(category==='Account Balance Summary')return [...document.querySelectorAll('#ORTable')].filter(visible);
+  const fields=required[category];return fields?[...document.querySelectorAll('table')].filter(table=>visible(table)&&ownTableRows(table).some(row=>fields.every(field=>cells(row).some(cell=>match(text(cell),field))))):[];
+ }
+ function scanTable(category,index=0){return primaryTables(category)[index]||null;}
+ const rowCount=(category,data)=>category==='Curriculum'?data.groups.reduce((sum,group)=>sum+group.courses.length,0):category==='Account Balance Summary'?data.payments.length:data.courses?.length||0;
+ function pageState(table){
+  if(!table)return {total:null,start:null,next:null,pager:false};
+  const wrapper=table.closest('.dataTables_wrapper,.dt-container')||table.parentElement;
+  const scope=wrapper||table;
+  const info=text(scope.querySelector('.dataTables_info,.dt-info,[data-table-info]'));
+  if(/filtered\s+from/i.test(info))throw Error('The SOLAR table is filtered. Clear its search and retry; cached data was kept.');
+  const count=info.replace(/,/g,'').match(/showing\s+(\d+)\s+to\s+(\d+)\s+of\s+(\d+)/i);
+  const declared=table.getAttribute('data-total-rows'),total=count?Number(count[3]):declared!==null?Number(declared):null;
+  const controls=[...scope.querySelectorAll('.paginate_button.next,.dt-paging-button.next,.pagination .next,[data-page-next],button[aria-label="Next page"],a[aria-label="Next page"]')].filter(visible);
+  if(controls.length>1)throw Error('Ambiguous table pagination. Cached data was kept.');
+  const control=controls[0],parent=control?.parentElement,disabled=control&&(control.disabled||control.getAttribute('aria-disabled')==='true'||control.classList.contains('disabled')||parent?.classList.contains('disabled'));
+  const next=control&&!disabled?(control.matches('a,button')?control:control.querySelector('a,button')):null;
+  const pager=!!scope.querySelector('.dataTables_paginate,.dt-paging,.pagination');
+  if(pager&&!controls.length&&[...scope.querySelectorAll('.paginate_button,.dt-paging-button,.page-link')].filter(visible).length>1)throw Error('Unsupported table pagination. Cached data was kept.');
+  if(control&&!disabled&&!next)throw Error('The next table page cannot be accessed. Cached data was kept.');
+  return {total,start:count?Number(count[1]):null,next,pager};
+ }
+ function assertReady(table){
+  guard();if([...document.querySelectorAll('[role="alert"],.alert-danger,.dataTables_error')].some(element=>visible(element)&&/failed|error|unable|unavailable|timed? out|could not/i.test(text(element))))throw Error('SOLAR reported a loading error. Cached data was kept.');if(document.readyState!=='complete')throw Error('The SOLAR page is still loading. Cached data was kept.');
+  if([...document.querySelectorAll('[aria-busy="true"],.dataTables_processing,.dt-processing,[data-loading="true"]')].some(visible))throw Error('The SOLAR table is still loading. Cached data was kept.');
+  if(table&&!visible(table))throw Error('The SOLAR table is not accessible. Cached data was kept.');
+  const wrapper=table?.closest('.dataTables_wrapper,.dt-container');
+  if(wrapper&&[...wrapper.querySelectorAll('input[type="search"]')].some(input=>input.value.trim()))throw Error('The SOLAR table is filtered. Cached data was kept.');
+ }
+ async function stableRead(category,previous,index=0){
+  let lastError;
+  for(let attempt=0;attempt<12;attempt++){
+   try{const table=scanTable(category,index);assertReady(table);
+    if(category!=='User Profile'&&!table)throw Error('Expected table is missing. Cached data was kept.');
+    const first=extract(category,table),signature=JSON.stringify(first.data);
+    if(previous===signature){await delay(200);continue;}
+    await delay(400);const secondTable=scanTable(category,index);assertReady(secondTable);const second=extract(category,secondTable);
+    if(signature!==JSON.stringify(second.data)){await delay(200);continue;}
+    return second;
+   }catch(error){lastError=error;if(/session expired|filtered|pagination|incomplete|unexpected table|required table/i.test(error.message))throw error;await delay(200);}
+  }
+  throw lastError||Error('The complete SOLAR table did not settle. Cached data was kept.');
+ }
+ async function scanOne(category,index){
+  let result=await stableRead(category,undefined,index),page=pageState(scanTable(category,index)),expected=page.total,pages=0,total=0;
+  if(page.start!==null&&page.start>1)throw Error('The table was not at its first page. Cached data was kept.');
+  const collected=[],seen=new Set();
+  for(;;){
+   const signature=JSON.stringify(result.data);if(seen.has(signature))throw Error('A table page repeated. Cached data was kept.');seen.add(signature);
+   if(category!=='User Profile'&&rowCount(category,result.data)===0&&page.total!==0&&!/no (records|data|courses|results)|nothing found/i.test(text(scanTable(category,index))))throw Error('An empty table was not confirmed by SOLAR. Cached data was kept.');
+   collected.push(result.data);total+=rowCount(category,result.data);pages++;
+   if(!page.next)break;
+   if(pages>=2000)throw Error('The full table exceeds the scan limit. Cached data was kept.');
+   page.next.click();result=await stableRead(category,signature,index);page=pageState(scanTable(category,index));
+   if(page.total!==expected)throw Error('The table total changed during collection. Cached data was kept.');
+   if(page.start!==null&&page.start!==total+1)throw Error('A table page was skipped. Cached data was kept.');
+  }
+  if(expected!==null&&expected!==total)throw Error('The complete table row count could not be verified. Cached data was kept.');
+  if(['Assessment','Account Balance Summary'].includes(category)){const omit=part=>{const {courses,payments,totalCredits,empty,...rest}=part;return rest;};if(collected.some(part=>JSON.stringify(omit(part))!==JSON.stringify(omit(collected[0]))))throw Error('Related SOLAR details changed while scanning pages. Cached data was kept.');}
+  let data={...collected[0]};
+  if(category==='Curriculum')data.groups=collected.flatMap(part=>part.groups);
+  else if(category==='Account Balance Summary')data.payments=collected.flatMap(part=>part.payments);
+  else if(category!=='User Profile')data.courses=collected.flatMap(part=>part.courses);
+  if(category==='Assessment')data.totalCredits=data.courses.reduce((sum,course)=>sum+(Number(course.credits)||0),0);
+  if('empty' in data)data.empty=category==='Assessment'?!data.courses.length&&!data.fees.length:total===0;
+  return {data,discovery:discover(),coverage:{complete:true,pages,rows:total,declaredRows:expected,checkedAt:new Date().toISOString(),method:page.pager?'all-pages':'stable-full-document'}};
+ }
+ async function scan(category){
+  const count=category==='User Profile'?1:primaryTables(category).length;
+  if(!count)throw Error('Expected table is missing. Cached data was kept.');
+  const snapshots=[];for(let index=0;index<count;index++)snapshots.push(await scanOne(category,index));
+  if(category!=='User Profile'&&primaryTables(category).length!==count)throw Error('The set of SOLAR tables changed during collection. Cached data was kept.');
+  const first=snapshots[0],data={...first.data};
+  if(category==='Curriculum')data.groups=snapshots.flatMap(part=>part.data.groups);
+  else if(category==='Account Balance Summary')data.payments=snapshots.flatMap(part=>part.data.payments);
+  else if(category!=='User Profile')data.courses=snapshots.flatMap(part=>part.data.courses);
+  if(category==='Assessment')data.totalCredits=data.courses.reduce((sum,course)=>sum+(Number(course.credits)||0),0);
+  const rows=snapshots.reduce((sum,part)=>sum+part.coverage.rows,0);
+  if('empty' in data)data.empty=category==='Assessment'?!data.courses.length&&!data.fees.length:rows===0;
+  return {data,discovery:discover(),coverage:{complete:true,tables:count,pages:snapshots.reduce((sum,part)=>sum+part.coverage.pages,0),rows,checks:snapshots.map(part=>part.coverage),checkedAt:new Date().toISOString()}};
  }
  async function submit(selection,autoTerm=''){
  guard();const entries=Object.entries(selection);if(!entries.length)throw Error('No term selection to submit.');
@@ -122,11 +211,12 @@
    throw Error('The term-specific OSES enrollment reminders PNG image is missing. Sign in to SOLAR and retry collection.');
  }
 
+ const timeoutSignal=ms=>{if(typeof globalThis.AbortSignal?.timeout==='function')return AbortSignal.timeout(ms);const controller=new AbortController();setTimeout(()=>controller.abort(Error('Request timed out.')),ms);return controller.signal;};
  async function reminders(){
    const discovery=discover(),images=[];let total=0;
    // Fetch within the signed-in SOLAR tab, so protected image requests use its session.
    for(const source of reminderImages()){
-     const response=await fetch(source.url,{credentials:'include',redirect:'error',cache:'no-cache',signal:AbortSignal.timeout(25000)});
+     const response=await fetch(source.url,{credentials:'include',redirect:'error',cache:'no-cache',signal:timeoutSignal(25000)});
      if(!response.ok)throw Error(`Enrollment reminders image returned HTTP ${response.status}.`);
      if(Number(response.headers.get('content-length'))>8000000)throw Error('Enrollment reminders image is too large (maximum 8 MB).');
      const bytes=new Uint8Array(await response.arrayBuffer());total+=bytes.length;
@@ -135,7 +225,7 @@
      let binary='';for(let index=0;index<bytes.length;index+=16384)binary+=String.fromCharCode(...bytes.subarray(index,index+16384));
      images.push({sourceUrl:source.url,alt:source.alt,dataUrl:'data:image/png;base64,'+btoa(binary)});
    }
-   return {data:{images},discovery};
+   return {data:{images},discovery,coverage:{complete:true,pages:1,rows:images.length,method:'verified-png',checkedAt:new Date().toISOString()}};
  }
- globalThis.BetterSolarDOM={discover,extract,submit,submitted,reminderImages,reminders};
+ globalThis.BetterSolarDOM={discover,extract,scan,submit,submitted,reminderImages,reminders};
 })();

@@ -1,1 +1,2 @@
 Production extension built: dist/ (load this folder unpacked)
+Mobile compatibility extension built: dist-mobile/ (Manifest V2 background page, legacy injection transport)

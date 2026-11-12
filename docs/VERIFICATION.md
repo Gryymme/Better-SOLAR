@@ -1,6 +1,6 @@
 # Verification and acceptance report
 
-Date: November 12, 2026. Updated for version **1.1.0**.
+Date: November 12, 2026. Updated for version **2.0.0**.
 
 This revision adds regression coverage for the reported nested SAF markup and UI corrections. See `CHANGELOG-1.0.1.md` for the issue-to-change mapping. All test results are recorded in the rebuilt `qa/` logs.
 
@@ -169,11 +169,35 @@ Automated coverage now includes every weekday-to-half mapping; initial horizonta
 
 Course details continue to preserve original codes/titles, known numeric credits and the clicked meeting's exact time/day/room. Offering enrichment does not invent missing credits. Both read-only and editable timetable blocks retain keyboard access and data-deletion cleanup. The visualizer still supports overlaps, no-slot warnings, selected/all removal and consent preferences.
 
-The optional browser suite includes three-column track-width checks, stable time-rail position after horizontal scrolling, bold/larger left-side values with smaller right-side labels, subtitle checks, and checkbox centering/alignment. Native Chromium remains blocked by the workspace socket restriction; passing native visual review is not claimed.
+The optional browser suite includes three-column track-width checks, stable time-rail position after horizontal scrolling, bold/larger right-side values with smaller left-side labels, subtitle checks, and checkbox centering/alignment. Native Chromium remains blocked by the workspace socket restriction; passing native visual review is not claimed.
 
 Manual acceptance for this release:
 
 1. On 320/390/700 px windows, verify exactly three day columns fit beside the fixed hour rail. Compare code/title/time/room information and block heights with the regular timetable. Swipe both ways and verify the labels do not move horizontally and the page itself does not overflow.
 2. Check Sunday, Monday, Tuesday and Wednesday default to the first half; Thursday, Friday and Saturday default to the second half. Check the visible-entry cue moves slightly toward the hidden days and returns. Drag or tap during the cue, use reduced motion, resize, and exercise Arrow Left/Right and Home/End.
-3. Open course information from Dashboard, Assessment and the visualizer. Values must align left and appear larger/bolder than the labels on their right. Verify the subtitle and full original field values. Only the visualizer should expose removal controls.
+3. Open course information from Dashboard, Assessment and the visualizer. Labels must be on the left; values must be on the right, left aligned and larger/bolder than the labels, with a compact gap. Verify the subtitle and full original field values. Only the visualizer should expose removal controls.
 4. Inspect external confirmation and Settings on wide and narrow windows. The checkbox must center vertically against both text lines; the title/help text starts at one common left edge. In wide Settings, Ask before opening external websites must remain one line. Consent/opt-out/reset and data deletion must still work.
+
+### Day-header / course-detail follow-up
+
+- Automated swipe coverage includes header-arrow paging, disabled directions after a manual swipe and disposal of button listeners. The shared rendered schedule exposes MON–SAT abbreviations while retaining full accessible weekday names.
+- Manual acceptance: at mobile widths, verify the rounded neutral capsule header, today’s inset pill and subtle edge arrows. Tap each available arrow, then swipe in both directions; confirm the pinned hour rail, three-day viewport and course columns stay aligned. Desktop headers should retain full weekday names.
+- Open course information from Dashboard, Assessment and the visualizer: labels must be to the left of their left-aligned bold values, with a compact 12 px gap (10 px on mobile). The subtitle and all full values must remain present.
+- Native Chrome rendering remains unavailable in this environment; browser geometry assertions are included for a compatible host.
+
+## 2.0.0 additions
+
+- The mobile schedule removes the large header capsule but retains arrows, MON–SAT labels and the small current-day pill. Course-information dialogs are capped at 640 px without changing other dialog widths. Native visual acceptance remains outstanding.
+- The shared heading and popup use Update SOLAR Data once cached academic data exists. Canonical comparison retains equal payloads and their original change timestamp while recording the successful check time.
+- Real DOM scan fixtures now traverse every supported page, compare declared row counts, collect multiple curriculum tables and reject missing/partial/filtered/unconfirmed-zero responses. They cover changed totals, skipped/repeated pages and unsupported pagination. Database fixtures cover changed rooms, dissolved courses, isolation of other terms and protection against missing profile fields.
+- Collector fixtures cover both modern and legacy injection/message paths, rejection of unverified snapshots, retry and deletion. API doubles cover callback-only Chrome, Promise-only browser, runtime.lastError and window-to-tab fallback.
+- Desktop MV3 and mobile MV2 builds contain the same source assets; mobile uses a background HTML page and bundled private bridge. Root-manifest installation archives are checked separately from the outer source archive.
+- README is organized as Description, Features, How to install/use, Changelogs previews and Other information, with real platform references and explicit browser-local storage details.
+
+### Outstanding native acceptance
+
+No passing native-browser rendering, actual mobile installation, live authenticated SOLAR update, real Canvas connection or mobile OS suspension test is claimed. Orion has partial iOS API support; Kiwi is archived. The ready-built mobile package and compatibility fallbacks are code-complete but require device verification. See MOBILE-COMPATIBILITY.md.
+
+On a real signed-in browser, compare complete tables and totals before/after an unchanged update, a dissolved course and a changed room. Interrupt pagination, expire the session and simulate a missing table: cached payloads must remain. Confirm that unknown/missing term options do not remove old term datasets. Verify both app and popup labels return to Scrape Data after explicit deletion.
+
+Release result: **163/163 automated tests passed**, syntax checks passed, both builds passed and both root-manifest archives passed integrity/asset checks. A fresh 2.0.0 Chromium attempt again failed on prohibited Unix socket creation; see qa/browser-attempt.txt.

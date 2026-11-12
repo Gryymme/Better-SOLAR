@@ -1,0 +1,4 @@
+PASS: desktop and mobile manifests are version 2.0.0 (MV3 / MV2).
+PASS: shared sources match both builds; imports and HTML/assets resolve.
+PASS: both installation ZIPs contain a root manifest and have valid CRCs.
+PASS: README has the five requested sections in order.

@@ -1,9 +1,10 @@
-const ext=()=>globalThis.chrome?.storage?.local;
+import {extension as chrome} from './webextension.js';
+const ext=()=>chrome?.storage?.local;
 let transitionTimer;
 export async function initTheme(){
  let theme;try{theme=ext()?(await chrome.storage.local.get('theme')).theme:localStorage.getItem('theme');}catch{}
  apply(theme,false);
- if(ext())chrome.storage.onChanged.addListener((changes,area)=>{if(area==='local'&&changes.theme)apply(changes.theme.newValue,true);});
+ if(ext()){try{chrome.storage.onChanged?.addListener((changes,area)=>{if(area==='local'&&changes.theme)apply(changes.theme.newValue,true);});}catch{}}
  else addEventListener('storage',event=>{if(event.key==='theme')apply(event.newValue,true);});
 }
 function apply(theme,animate=true){

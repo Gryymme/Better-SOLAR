@@ -9,7 +9,15 @@ export async function allRecords(){const owner=await getMeta('activeOwner');cons
 export const getRecord=id=>run('records','readonly',s=>s.get(id));
 export async function saveRecord(record){if(!CATEGORIES.includes(record.category))throw new Error('Unknown data category');return run('records','readwrite',s=>s.put(record));}
 export const recordId=(category,term='',year='',owner='')=>`${owner}|${category}|${term}|${year}`;
-export async function saveSuccess(task,data,url){const id=recordId(task.category,task.term,task.year,task.owner);await saveRecord({id,owner:task.owner||'',category:task.category,term:task.term||'',year:task.year||'',sourceSelection:task.selection||{},sourceUrl:url,scrapedAt:new Date().toISOString(),status:data.empty?'empty':'success',data});}
+export function canonicalData(value){if(Array.isArray(value))return '['+value.map(canonicalData).join(',')+']';if(value&&typeof value==='object')return '{'+Object.keys(value).sort().map(key=>JSON.stringify(key)+':'+canonicalData(value[key])).join(',')+'}';return JSON.stringify(value);}
+export async function saveSuccess(task,data,url,coverage){
+ if(coverage&&coverage.complete!==true)throw Error('Incomplete collection: previous data was kept.');
+ const id=recordId(task.category,task.term,task.year,task.owner),old=await getRecord(id);
+ if(coverage&&task.category==='User Profile'&&old?.data?.values&&Object.entries(old.data.values).some(([label,value])=>value&&!data.fieldsPresent?.includes(label)))throw Error('Profile fields are missing from this response. Previous data was kept.');
+ const now=new Date().toISOString(),unchanged=!!old?.data&&canonicalData(old.data)===canonicalData(data);
+ await saveRecord({id,owner:task.owner||'',category:task.category,term:task.term||'',year:task.year||'',sourceSelection:task.selection||{},sourceUrl:url,scrapedAt:unchanged?old.scrapedAt:now,lastCheckedAt:now,status:data.empty?'empty':'success',data:unchanged?old.data:data,...(coverage?{coverage}:{} )});
+ return {changed:!unchanged};
+}
 export async function markFailure(task,error){const id=recordId(task.category,task.term,task.year,task.owner),old=await getRecord(id);await saveRecord({...old,id,owner:task.owner||'',category:task.category,term:task.term||'',year:task.year||'',sourceUrl:task.url,sourceSelection:task.selection||{},status:'error',lastAttempt:new Date().toISOString(),error:String(error),data:old?.data||null});}
 
 // One transaction removes every student's records and all private metadata.

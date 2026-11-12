@@ -1,0 +1,8 @@
+import {timeoutSignal} from './network.js';
+import {extension as chrome} from './webextension.js';
+import {getMeta,setMetaIfGeneration} from './db.js';
+import {parseICS} from './ics.js';
+export function feedURL(raw){let u;try{u=new URL(raw.trim().replace(/^webcal:/i,'https:'));}catch{throw Error('Enter a complete Canvas Calendar Feed URL.');}if(u.protocol!=='https:'||u.username||u.password||!/^\/feeds\/calendars\/.+\.ics$/i.test(u.pathname))throw Error('Use the HTTPS .ics calendar feed copied from your Canvas instance.');return u;}
+export async function requestFeedAccess(url){const u=feedURL(url);if(!chrome?.permissions)throw Error('Connect to Canvas from the installed Better SOLAR extension.');const allowed=await chrome.permissions.request({origins:[u.origin+'/*']});if(!allowed)throw Error('Canvas access was not granted. Allow access to this Canvas instance, then retry.');return u.href;}
+export async function refreshFeed(raw){const generation=await getMeta('dataGeneration');const u=feedURL(raw);const response=await fetch(u.href,{credentials:'omit',redirect:'error',signal:timeoutSignal(25000),cache:'no-cache'});if(!response.ok)throw Error(`Canvas returned HTTP ${response.status}. Copy a fresh Calendar Feed URL and retry.`);const length=+response.headers.get('content-length');if(length>10000000)throw Error('Calendar feed is too large (maximum 10 MB).');const source=await response.text();if(source.length>10000000)throw Error('Calendar feed is too large.');const parsed=parseICS(source);const value={url:u.href,source,fetchedAt:new Date().toISOString(),eventCount:parsed.length};await setMetaIfGeneration('canvas',value,generation);return value;}
+export const cachedFeed=()=>getMeta('canvas');
