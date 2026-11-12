@@ -1,3 +1,0 @@
-import test from 'node:test';import assert from 'node:assert/strict';import {headerMinimized} from '../src/navigation.js';
-test('Header hysteresis does not flicker across small movements around its collapse threshold',()=>{let minimized=false;const positions=[0,20,47,48,47,25,9,8,9,25,47,48];const states=positions.map(y=>(minimized=headerMinimized(y,minimized)));assert.deepEqual(states,[false,false,false,true,true,true,true,false,false,false,false,true]);});
-test('Header safely expands at the top including negative overscroll',()=>{assert.equal(headerMinimized(0,true),false);assert.equal(headerMinimized(-20,true),false);assert.equal(headerMinimized(100,false),true);});

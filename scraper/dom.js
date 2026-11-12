@@ -10,7 +10,39 @@
  const aliases={code:['coursecode','course','courses','code'],title:['coursetitle','title','description'],section:['coursesection','section'],credits:['credits','units','creditunits'],days:['days','day'],time:['time','schedule'],room:['room','rooms'],size:['classsize','size'],remaining:['remainingslots','remaining','slots'],midterm:['midtermgrade','midterm'],final:['finalgrade','final'],lab:['laboratorycorequisite','laboratory','corequisite'],prerequisite:['prerequisite','prerequisites'],paid:['payments','amountpaid','payment'],or:['ornumber','or','officialreceiptnumber'],date:['date','paymentdate'],mode:['mode','paymentmode']};
  function match(label,field){const n=norm(label);return aliases[field].some(a=>n===a);}
  function tableFor(required,preferred){const first=preferred?document.querySelector(preferred):null;if(first)return first;return [...document.querySelectorAll('table')].find(t=>[...t.rows].some(r=>required.every(f=>cells(r).some(c=>match(text(c),f)))));}
- function rows(table,fields,{allowGroups=false}={}){if(!table)throw Error('Expected table is missing. The portal structure may have changed.');const list=[...table.rows];const idx=list.findIndex(r=>fields.filter(f=>['code','title','paid','or'].includes(f)).every(f=>cells(r).some(c=>match(text(c),f))));if(idx<0)throw Error('Expected table headings were not found. No data was replaced.');const heads=cells(list[idx]).map(text);const map=fields.map(f=>heads.findIndex(h=>match(h,f)));if(map.some(n=>n<0))throw Error('Required table columns are missing: '+fields.filter((f,i)=>map[i]<0).join(', '));const result=[];let group='';for(const r of list.slice(idx+1)){const cs=cells(r);if(!cs.length)continue;if(r.parentElement?.tagName==='TFOOT'&&/^total\b/i.test(text(cs[0])))continue;if(/^total\s+(?:units|credits)\s*:?$/i.test(text(cs[0])))continue;if(cs.some(cell=>/^(?:loading|please wait|fetching)(?:[ .…]*)$/i.test(text(cell))))throw Error('Table rows are still loading. Previous data was kept.');if(cs.length===1&&cs[0].colSpan>=fields.length){if(allowGroups){group=text(cs[0]);result.push({groupHeading:group});}else if(text(cs[0])&&!/^(no (records|data|courses|results)|nothing found)/i.test(text(cs[0])))throw Error('An unexpected table row was returned. Previous data was kept.');continue;}if(cs.every(c=>c.tagName==='TH'))continue;if(cs.length<=Math.max(...map)){if(cs.some(c=>text(c)))throw Error('A table row is incomplete. Previous data was kept.');continue;}const values=cs.map(text);if(!values.some(Boolean)||/^(no (records|data|courses|results)|nothing found)/i.test(values.join(' ')))continue;const item=Object.fromEntries(fields.map((f,i)=>[f,values[map[i]]]));if(('code' in item&&!item.code)||('paid' in item&&!item.paid))throw Error('A required table row value is missing. Previous data was kept.');item.rawValues=values;if(allowGroups)item.group=group||'Unspecified year and term';result.push(item);}return result;}
+ function rows(table,fields,{allowGroups=false}={}){
+  if(!table)throw Error('Expected table is missing. The portal structure may have changed.');
+  const list=ownTableRows(table),idx=list.findIndex(row=>fields.filter(field=>['code','title','paid','or'].includes(field)).every(field=>cells(row).some(cell=>match(text(cell),field))));
+  if(idx<0)throw Error('Expected table headings were not found. No data was replaced.');
+  const heads=cells(list[idx]).map(text),map=fields.map(field=>heads.findIndex(heading=>match(heading,field)));
+  if(map.some(index=>index<0))throw Error('Required table columns are missing: '+fields.filter((field,index)=>map[index]<0).join(', '));
+  const sectionColumn=map[fields.indexOf('section')],knownSections=new Set(list.slice(idx+1).map(cells).filter(cs=>cs.length===heads.length&&!cs.some(cell=>cell.colSpan>1)).map(cs=>norm(text(cs[sectionColumn]))).filter(Boolean));
+  const result=[];result.tableNotes=[];let group='';
+  for(const row of list.slice(idx+1)){
+   const cs=cells(row),values=cs.map(text),label=values.join(' ').trim();if(!cs.length||!label)continue;
+   if(cs.some(cell=>/^(?:loading|please wait|fetching)(?:[ .…]*)$/i.test(text(cell))))throw Error('Table rows are still loading. Previous data was kept.');
+   if(cs.every(cell=>cell.tagName==='TH')||fields.every(field=>cs.some(cell=>match(text(cell),field))))continue;
+   const total=/^(?:grand\s+total|sub\s*total|total|number\s+of\s+(?:units|credits|subjects)|no\.?\s+of\s+(?:units|credits|subjects))\b/i.test(values[0])||/^(?:total(?:noof|numberof)?(?:units|credits|subjects|courses)|totalcreditunits|(?:numberof|noof)(?:units|credits|subjects))/.test(norm(values[0]));
+   if(total){
+    result.tableNotes.push(label);
+    continue;
+   }
+   if(cs.length===1&&cs[0].colSpan>=heads.length){
+    if(/^(?:no (?:records|data|courses|results)|nothing found)/i.test(label))continue;
+    if(/\b(?:error|failed|unable|unavailable|loading|please wait|session expired)\b/i.test(label))throw Error('A table result is incomplete or unavailable. Previous data was kept.');
+    if(allowGroups){group=label;result.push({groupHeading:group});continue;}
+    const annotation=/^(?:note|remarks?|legend|section|block|schedule|copyright|printed|generated|page|enrollment|registration|lecture|laboratory|term|school\s+year|student|year(?:\s+level)?|status|credits?|credit\s+units|units?|remaining|registered|enrolled|earned|courses?\s+(?:list|load|schedule))\b/i.test(label);
+    if(!annotation&&!knownSections.has(norm(label))&&/^[a-z]{2,}[- ]?\d+[a-z]?(?:$|\s)/i.test(label))throw Error('A course row is incomplete. Previous data was kept.');
+    result.tableNotes.push(label);continue;
+   }
+   if(cs.length<=Math.max(...map)||cs.some(cell=>cell.colSpan>1))throw Error('A table row is incomplete. Previous data was kept.');
+   if(/^(?:no (?:records|data|courses|results)|nothing found)/i.test(label))continue;
+   const item=Object.fromEntries(fields.map((field,index)=>[field,values[map[index]]]));
+   if(('code' in item&&!item.code)||('paid' in item&&!item.paid))throw Error('A required table row value is missing. Previous data was kept.');
+   item.rawValues=values;if(allowGroups)item.group=group||'Unspecified year and term';result.push(item);
+  }
+  return result;
+ }
  function pairs(table){if(!table)return {};const result={};for(const row of table.rows){const c=cells(row);if(c.length>=2){const label=text(c[0]).replace(/:\s*$/,'');if(label&&!/^(particulars|label)$/i.test(label))result[label]=c.slice(1).map(text).join(' ');}}return result;}
  function pick(map,names){for(const name of names){const entry=Object.entries(map).find(([k])=>norm(k)===norm(name));if(entry)return entry[1];}return '';}
  const emptyText=()=>/no (records|results|data|courses)|not available|not enrolled|no assessment/i.test(text(document.body));
@@ -86,7 +118,7 @@
  if(fees.some(f=>!f.value))throw Error('Assessment fee values are still loading. Retry once SOLAR finishes loading this term.');
  const {summary,rawSummary}=assessmentSummary(table,candidates);
  if(!summary['Student Number'])throw Error('SAF student number could not be mapped (Student # / Student Number).');
- data={summary,rawSummary,courses,fees,totalCredits:courses.reduce((sum,c)=>sum+(Number(c.credits)||0),0),empty:!courses.length&&!fees.length};
+ data={summary,rawSummary,courses,fees,tableNotes:courses.tableNotes,totalCredits:courses.reduce((sum,c)=>sum+(Number(c.credits)||0),0),empty:!courses.length&&!fees.length};
  }else throw Error('Unknown category');
  return {data,discovery:meta};
  }
@@ -146,7 +178,8 @@
   const collected=[],seen=new Set();
   for(;;){
    const signature=JSON.stringify(result.data);if(seen.has(signature))throw Error('A table page repeated. Cached data was kept.');seen.add(signature);
-   if(category!=='User Profile'&&rowCount(category,result.data)===0&&page.total!==0&&!/no (records|data|courses|results)|nothing found/i.test(text(scanTable(category,index))))throw Error('An empty table was not confirmed by SOLAR. Cached data was kept.');
+   const confirmedPaymentEmpty=category==='Account Balance Summary'&&scanTable(category,index)?.id==='ORTable'&&!page.pager&&page.total===null;
+   if(category!=='User Profile'&&rowCount(category,result.data)===0&&page.total!==0&&!confirmedPaymentEmpty&&!/no (records|data|courses|results)|nothing found/i.test(text(scanTable(category,index))))throw Error('An empty table was not confirmed by SOLAR. Cached data was kept.');
    collected.push(result.data);total+=rowCount(category,result.data);pages++;
    if(!page.next)break;
    if(pages>=2000)throw Error('The full table exceeds the scan limit. Cached data was kept.');
@@ -155,12 +188,12 @@
    if(page.start!==null&&page.start!==total+1)throw Error('A table page was skipped. Cached data was kept.');
   }
   if(expected!==null&&expected!==total)throw Error('The complete table row count could not be verified. Cached data was kept.');
-  if(['Assessment','Account Balance Summary'].includes(category)){const omit=part=>{const {courses,payments,totalCredits,empty,...rest}=part;return rest;};if(collected.some(part=>JSON.stringify(omit(part))!==JSON.stringify(omit(collected[0]))))throw Error('Related SOLAR details changed while scanning pages. Cached data was kept.');}
+  if(['Assessment','Account Balance Summary'].includes(category)){const omit=part=>{const {courses,payments,totalCredits,empty,tableNotes,declaredCredits,...rest}=part;return rest;};if(collected.some(part=>JSON.stringify(omit(part))!==JSON.stringify(omit(collected[0]))))throw Error('Related SOLAR details changed while scanning pages. Cached data was kept.');}
   let data={...collected[0]};
   if(category==='Curriculum')data.groups=collected.flatMap(part=>part.groups);
   else if(category==='Account Balance Summary')data.payments=collected.flatMap(part=>part.payments);
   else if(category!=='User Profile')data.courses=collected.flatMap(part=>part.courses);
-  if(category==='Assessment')data.totalCredits=data.courses.reduce((sum,course)=>sum+(Number(course.credits)||0),0);
+  if(category==='Assessment'){data.totalCredits=data.courses.reduce((sum,course)=>sum+(Number(course.credits)||0),0);data.tableNotes=[...new Set(collected.flatMap(part=>part.tableNotes||[]))];}
   if('empty' in data)data.empty=category==='Assessment'?!data.courses.length&&!data.fees.length:total===0;
   return {data,discovery:discover(),coverage:{complete:true,pages,rows:total,declaredRows:expected,checkedAt:new Date().toISOString(),method:page.pager?'all-pages':'stable-full-document'}};
  }
@@ -173,10 +206,15 @@
   if(category==='Curriculum')data.groups=snapshots.flatMap(part=>part.data.groups);
   else if(category==='Account Balance Summary')data.payments=snapshots.flatMap(part=>part.data.payments);
   else if(category!=='User Profile')data.courses=snapshots.flatMap(part=>part.data.courses);
-  if(category==='Assessment')data.totalCredits=data.courses.reduce((sum,course)=>sum+(Number(course.credits)||0),0);
+  if(category==='Assessment'){data.totalCredits=data.courses.reduce((sum,course)=>sum+(Number(course.credits)||0),0);data.tableNotes=[...new Set(snapshots.flatMap(part=>part.data.tableNotes||[]))];}
   const rows=snapshots.reduce((sum,part)=>sum+part.coverage.rows,0);
   if('empty' in data)data.empty=category==='Assessment'?!data.courses.length&&!data.fees.length:rows===0;
   return {data,discovery:discover(),coverage:{complete:true,tables:count,pages:snapshots.reduce((sum,part)=>sum+part.coverage.pages,0),rows,checks:snapshots.map(part=>part.coverage),checkedAt:new Date().toISOString()}};
+ }
+ function navigate(value){
+  const url=new URL(value,location.href);
+  if(url.origin!=='https://solar.feualabang.edu.ph'||url.origin!==location.origin||url.username||url.password||!/^\/(?:user\/profile|program\/curriculum|course\/offerings|student\/(?:saf|grades|balance(?:\/\d+-\d{8})?)|enrollment\/reminders)\/?$/.test(url.pathname))throw Error('Unsupported SOLAR navigation destination.');
+  setTimeout(()=>location.assign(url.href),50);return {accepted:true,url:url.href};
  }
  async function submit(selection,autoTerm=''){
  guard();const entries=Object.entries(selection);if(!entries.length)throw Error('No term selection to submit.');
@@ -196,9 +234,9 @@
  const observer=new MutationObserver(ms=>{if(!state.started)return;const changed=ms.some(m=>output.some(t=>t===m.target||t.contains(m.target))||[...m.removedNodes,...m.addedNodes].some(n=>n.nodeType===1&&(n.matches?.('table,.assessment_schedule-container,.assessment_form-container')||n.querySelector?.('table,.assessment_schedule-container,.assessment_form-container'))));if(changed||(!emptyBefore&&emptyText())){state.changed=true;state.lastChanged=Date.now();}});
  observer.observe(document.body,{subtree:true,childList:true,characterData:true});
  const button=form.querySelector('button[type="submit"],input[type="submit"],button:not([type])');setTimeout(()=>{state.started=true;try{form.requestSubmit(button||undefined);}catch(error){state.error=error.message;}},30);
- return {token,before:performance.timeOrigin};
+ return {token,before:performance.timeOrigin,documentToken:globalThis.__betterSolarDocumentToken};
  }
- function submitted(state,selection){guard();const selected=Object.entries(selection).every(([id,value])=>(document.getElementById(id)||document.querySelector(`select[name="${CSS.escape(id)}"]`))?.value===value);const marker=globalThis.__betterSolarSubmit;const fresh=performance.timeOrigin!==state.before;return {ready:document.readyState==='complete'&&selected&&(fresh||(marker?.token===state.token&&marker.changed&&Date.now()-marker.lastChanged>=600)),error:marker?.error||'',fresh,selected,url:location.href};}
+ function submitted(state,selection){guard();const selected=Object.entries(selection).every(([id,value])=>(document.getElementById(id)||document.querySelector(`select[name="${CSS.escape(id)}"]`))?.value===value);const marker=globalThis.__betterSolarSubmit;const fresh=performance.timeOrigin!==state.before||!!(state.documentToken&&globalThis.__betterSolarDocumentToken&&state.documentToken!==globalThis.__betterSolarDocumentToken);return {ready:!!(document.readyState==='complete'&&selected&&(fresh||(marker?.token===state.token&&marker?.changed&&Date.now()-marker.lastChanged>=600))),error:marker?.error||'',fresh,selected,url:location.href};}
  function reminderImages(){
    guard();
    for(const element of document.querySelectorAll('img[src]')){
@@ -227,5 +265,5 @@
    }
    return {data:{images},discovery,coverage:{complete:true,pages:1,rows:images.length,method:'verified-png',checkedAt:new Date().toISOString()}};
  }
- globalThis.BetterSolarDOM={discover,extract,scan,submit,submitted,reminderImages,reminders};
+ globalThis.BetterSolarDOM={discover,extract,scan,navigate,submit,submitted,reminderImages,reminders};
 })();

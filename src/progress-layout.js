@@ -1,3 +1,4 @@
+import {syncReportMotion} from './report-motion.js';
 export const progressFraction=(completed,total)=>Math.max(0,Math.min(1,Number(total)>0&&Number.isFinite(Number(completed))?Number(completed)/Number(total):0));
 export function displayedProgress(scope=document){
  const fill=scope.querySelector('.collection-fill');
@@ -6,6 +7,7 @@ export function displayedProgress(scope=document){
  return track?Math.max(0,Math.min(1,fill.getBoundingClientRect().width/track)):0;
 }
 export function syncProgress(previous=0,scope=document){
+ syncReportMotion(scope);
  const fill=scope.querySelector('.collection-fill');if(!fill)return;
  fill.style.transition='none';fill.style.transform=`scaleX(${previous})`;
  // Commit the old visual width before transitioning, including after a full render.

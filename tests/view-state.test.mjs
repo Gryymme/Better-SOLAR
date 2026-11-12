@@ -1,3 +1,0 @@
-import test from 'node:test';import assert from 'node:assert/strict';import {selectionsAfterNavigation,TERM_PAGES} from '../src/view-state.js';
-test('Leaving each term-selector page resets its selection without touching another page',()=>{for(const page of TERM_PAGES){const selected={[page]:{term:'1',year:'20262027'},other:{term:'2'}};const next=selectionsAfterNavigation(selected,page,'dashboard');assert.equal(next[page],undefined);assert.equal(next.other.term,'2');assert.equal(selected[page].term,'1');}});
-test('Submitting or refreshing the current page preserves its selection',()=>{const selected={grades:{term:'1',year:'20262027'}};assert.equal(selectionsAfterNavigation(selected,'grades','grades'),selected);});

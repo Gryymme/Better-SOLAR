@@ -1,1 +1,0 @@
-PASS: syntax and manifest checks

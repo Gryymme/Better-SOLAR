@@ -8,3 +8,5 @@ export function collectionReport(records,progress={}, {expanded=false,demo=false
  const body=`${detail}<p class="record-status">Academic records stay on this device.</p>${errors.length?`<ul class="cache-errors">${errors.map(error=>`<li class="error-text"><strong>${esc(error.label)}:</strong> ${esc(error.error)}</li>`).join('')}</ul>`:''}`;
  return `<div class="cache-bar">${cacheFeedback(summary,body,{expanded,failed:!!errors.length,collecting:collecting?progress:null})}${dismissible?`<button class="icon-button cache-dismiss" data-action="dismiss-cache" aria-label="Dismiss cached datasets report" title="Report remains available in Settings">${icon('close')}</button>`:''}</div>`;
 }
+
+export function cacheDismissalAdvisory(elapsed=0){return `<div class="cache-bar cache-dismiss-notice" role="status" aria-live="polite" style="animation-delay:${Math.max(-300,1500-Math.max(0,Number(elapsed)||0))}ms">The collection report can be viewed in Settings.</div>`;}

@@ -2,6 +2,7 @@ import {extension as chrome,watchProgress} from './webextension.js';
 import {allRecords} from './db.js';
 import {initializeExternalLinks} from './external-links.js';
 import {initTheme} from './theme.js';
+import {reportExpanded} from './report-motion.js';
 import {displayedProgress,syncProgress} from './progress-layout.js';
 import {esc,icon,cacheFeedback} from './ui.js';
 import {openSettings} from './settings.js';
@@ -11,10 +12,10 @@ await initTheme();await initializeExternalLinks();void initializeFonts();const s
 let hasData=false;
 async function refreshDataState(){hasData=(await allRecords()).some(record=>record.data);document.querySelector('#scrape').textContent=hasData?'Update SOLAR Data':'Scrape Data';}
 function display(p={}){
- const running=p.state==='running',el=document.querySelector('#progress'),previous=displayedProgress(el),expanded=el.querySelector('details')?.open||false;
+ const running=p.state==='running',el=document.querySelector('#progress'),previous=displayedProgress(el),expanded=reportExpanded(el);
  document.querySelector('#scrape').disabled=running;document.querySelector('#scrape').textContent=running?'Collecting…':hasData?'Update SOLAR Data':'Scrape Data';
  if(!p.state){el.textContent='Ready to collect your signed-in SOLAR records.';return;}
- const summary=p.state==='complete'?'Collection complete':p.state==='partial'?'Collection finished with errors':'Collector needs attention';
+ const summary=p.state==='imported'?'Data imported':p.state==='complete'?'Collection complete':p.state==='partial'?'Collection finished with errors':'Collector needs attention';
  const body=`<p class="collection-detail">${running?`Collecting ${esc(p.current||'SOLAR records')} · `:''}${esc(p.completed||0)}/${esc(p.total||0)} steps${p.failed?` · ${esc(p.failed)} failed`:''}</p>${(p.errors||[]).map(error=>`<p class="error-text"><b>${esc(error.label)}:</b> ${esc(error.error)}</p>`).join('')}`;
  el.innerHTML=cacheFeedback(summary,body,{expanded,failed:!!p.errors?.length,collecting:running?p:null});syncProgress(previous,el);
 }

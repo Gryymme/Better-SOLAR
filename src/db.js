@@ -41,3 +41,29 @@ export async function setMetaIfGeneration(key,value,expected){
  });
  if(!accepted)throw new Error('Local data was deleted while this request was running. Connect the feed again to save new data.');
 }
+// One transaction merges a validated transfer. It never clears records, never
+// overwrites a newer local dataset, and retains unrelated students/terms.
+export async function importRecordSnapshot(bundle){
+ const database=await db(),importId=crypto.randomUUID(),now=new Date().toISOString();
+ const result={importId,added:0,updated:0,kept:0,owner:bundle.owner};
+ await new Promise((resolve,reject)=>{
+  const tx=database.transaction(['records','meta'],'readwrite'),records=tx.objectStore('records'),meta=tx.objectStore('meta');
+  const generation=meta.get('dataGeneration');generation.onsuccess=()=>meta.put(crypto.randomUUID(),'dataGeneration');
+  for(const record of bundle.records){
+   const id=recordId(record.category,record.term,record.year,bundle.owner),request=records.get(id);
+   request.onsuccess=()=>{
+    const old=request.result,stamp=value=>Date.parse(value?.lastCheckedAt||value?.scrapedAt||'')||0;
+    if(old?.data&&(stamp(record)<=stamp(old)||canonicalData(old.data)===canonicalData(record.data))){result.kept++;return;}
+    records.put({...record,id,owner:bundle.owner,importedAt:now});old?.data?result.updated++:result.added++;
+   };
+  }
+  const previousOwner=meta.get('activeOwner');previousOwner.onsuccess=()=>{
+   const changingOwner=previousOwner.result!==bundle.owner;meta.put(bundle.owner,'activeOwner');
+   if(bundle.canvas){const current=meta.get('canvas');current.onsuccess=()=>{if(changingOwner||!current.result||Date.parse(bundle.canvas.fetchedAt)>Date.parse(current.result.fetchedAt||''))meta.put({...bundle.canvas,importedAt:now},'canvas');};}
+   else if(changingOwner)meta.put(null,'canvas');
+  };
+  meta.put({id:importId,at:now,owner:bundle.owner},'lastImport');
+  tx.oncomplete=()=>resolve(result);tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error||Error('Import was interrupted; no transfer was committed.'));
+ });
+ return result;
+}
