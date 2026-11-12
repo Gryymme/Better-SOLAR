@@ -1,6 +1,6 @@
 {
   "name": "better-solar",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "private": true,
   "type": "module",
   "description": "Local-first FEU Alabang SOLAR companion extension",

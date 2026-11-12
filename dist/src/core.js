@@ -19,11 +19,11 @@ export function occurrences(course) {
  ds.forEach((d,i)=>{const t=interval(ts[i]),days=dayTokens(d); if(!t||!days.length){warnings.push(`${course.code}: Unrecognized meeting ${d} ${ts[i]}; inspect the source schedule.`);return;}days.forEach(day=>out.push({...t,day,room:rs[i],course}));});return {items:out,warnings};
 }
 export const courseId = c => JSON.stringify([c.code,c.section,c.days??c.day,c.time,c.room]);
-export function conflicts(existing,added) {
+export function conflicts(existing,added,{allowOverlap=false}={}) {
  const errors=[],seen=new Set(existing.map(courseId)),all=[...existing];
  for(const c of added){if(seen.has(courseId(c))){errors.push(`${c.code} (${c.section}) is already selected.`);continue;}seen.add(courseId(c));
  const parsed=occurrences(c);errors.push(...parsed.warnings);
- for(const m of parsed.items)for(const other of all)for(const o of occurrences(other).items)if(m.day===o.day&&m.start<o.end&&o.start<m.end)errors.push(`${c.code} (${c.section}) conflicts with ${other.code} (${other.section}) on ${DAY_NAMES[DAYS.indexOf(m.day)]}, ${clock(Math.max(m.start,o.start))}.`);
+ if(!allowOverlap)for(const m of parsed.items)for(const other of all)for(const o of occurrences(other).items)if(m.day===o.day&&m.start<o.end&&o.start<m.end)errors.push(`${c.code} (${c.section}) conflicts with ${other.code} (${other.section}) on ${DAY_NAMES[DAYS.indexOf(m.day)]}, ${clock(Math.max(m.start,o.start))}.`);
  all.push(c);}return [...new Set(errors)];
 }
 export function filtered(courses,{q='',section='',days=[]}={}) {

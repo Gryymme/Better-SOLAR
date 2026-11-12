@@ -73,7 +73,7 @@ function refreshCreator(){const p=document.querySelector('#creator-panel');if(p)
 function addError(d,errors){const element=d.querySelector('.modal-error');if(element)element.textContent=errors.join('\n');syncTablePeeks(d);}
 async function addToVisualizer(added,dialog,context,message){
  if(!added.length){addError(dialog,['Select at least one course.']);return;}
- const errors=conflicts(creator,added);if(errors.length){addError(dialog,errors);return;}
+ const errors=conflicts(creator,added,{allowOverlap:true});if(errors.length){addError(dialog,errors);return;}
  if(slotWarnings(added).length&&!await confirmUnavailable(added))return;
  if(context.epoch!==dataEpoch||context.record!==target()?.id||route!=='course-list'||!dialog.open)return;
  creator.push(...added);await closeModal();if(context.epoch!==dataEpoch)return;refreshCreator();toast(message);

@@ -4,6 +4,14 @@ A local-first companion for FEU Alabang SOLAR, built as a Chrome/Edge Manifest V
 
 **Delivery status:** Implementation and automated fixture tests are included. A real signed-in SOLAR scrape, real Canvas connection, browser layout review, and installed-extension acceptance checks still need to be performed. This environment could not launch Chromium. See [Verification](docs/VERIFICATION.md) for the precise scope of testing and remaining checks.
 
+## Version 1.0.8
+
+The external-website dialog now puts **Do not ask again** below the divider, in the same footer row as **Cancel** and **Proceed**, including compact phone layouts.
+
+The schedule creator accepts courses whose meeting times overlap, both individually and as block sections. Duplicate selections and invalid meeting data are still reported, and no-slot warnings remain. All weekly timetables place conflicting meetings side by side within the affected day/time group; later non-conflicting meetings regain full day-column width.
+
+Overlapping blocks display at most **20 characters** of the course title, including the ellipsis, while the complete title remains in the accessible description and course-action dialog. Code and title share one fitted font size across desktop and mobile schedules. Whole title words shrink to fit a line rather than being split or replaced. When a code needs wrapping, letters and numbers separate with a hyphen: `CCS0001` displays as `CCS-` / `001`, and `GED0004A` as `GED-` / `004A`. Original source codes stay unchanged. See [the full change log](docs/CHANGELOG-1.0.8.md).
+
 ## Version 1.0.7
 
 Clicking a visualizer course block now offers **Remove course**, **Remove all courses**, and **Cancel**. The redundant list beneath the timetable is gone. Hovering a clickable block changes its color and gives it the same lift as a button, including a separate red hover color for full courses.
@@ -126,7 +134,7 @@ Open **Courses Offered**, submit a term/year, then choose **Open Schedule Creato
 - **Add an Individual Course** opens the complete selected-term list with its own filters. Select multiple courses, then **Add Courses**. Changing filters retains the course selections. All selected day buttons must match (AND logic).
 - Zero-slot or unknown-slot courses stay selectable and highlighted in red. Adding them shows a warning; confirmation adds red blocks to the visualizer. Back keeps the selection without adding it.
 - **Add a Block Section** checks every course in the block before adding the whole block.
-- The checks reject overlaps against existing courses and within the new selection. Error messages identify both courses and the meeting day/time. No partial insertion occurs.
+- Overlapping meeting times are allowed, including overlaps against courses already in the visualizer and within a newly selected block. The shared timetable places them in separate side-by-side lanes. Exact duplicate selections and invalid meeting pairing still reject the selection atomically.
 - Click a course block to open Course actions. Remove course deletes every meeting of that selected course; Remove all courses clears the weekly visualizer. Cancel changes nothing. Keyboard users can focus a block and press Enter or Space. No separate course list is displayed beneath the timetable.
 - Closing/reopening the visualizer retains its state. The draft uses that application window's session storage while the course page is open. Leaving/reloading the page or choosing a different offered term clears the draft; returning requires selecting term/year again.
 

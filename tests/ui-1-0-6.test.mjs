@@ -36,7 +36,7 @@ test('Mobile course code and title share one measured font while preserving word
    assert.ok(lines.every(line=>line.length<=16&&measure(line)*layout.fontSize/9<=48.1));
  }
  assert.ok(layout.lines[1].includes('INTELLIGENT'));assert.ok(!layout.lines[1].includes('INTELLIGEN'));
- const extreme=courseTextLayout(['CS123','A'.repeat(30)],48,measure,9);assert.ok(extreme.lines.flat().every(line=>line.length<=16));assert.ok(extreme.lines[1][0].endsWith('...'));
+ const extreme=courseTextLayout(['CS123','A'.repeat(30)],48,measure,9);assert.deepEqual(extreme.lines[1],['A'.repeat(30)]);assert.ok(measure(extreme.lines[1][0])*extreme.fontSize/9<=48.1);
 });
 test('Mobile axis labels omit minutes while content heights use just content, padding and borders',()=>{
  assert.equal(compactHour(420),'7 AM');assert.equal(compactHour(720),'12 PM');assert.equal(compactHour(1260),'9 PM');

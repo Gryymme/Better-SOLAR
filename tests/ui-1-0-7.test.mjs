@@ -1,5 +1,5 @@
 import test from 'node:test';import assert from 'node:assert/strict';import {readFileSync} from 'node:fs';
-import {confirmCourseRemoval,confirmExternalNavigation,externalConfirmationMarkup,isReminderImage,enrollmentReminders,navigation,offeringRows} from '../src/ui.js';
+import {confirmCourseRemoval,confirmExternalNavigation,externalConfirmationMarkup,externalConfirmationFooter,isReminderImage,enrollmentReminders,navigation,offeringRows} from '../src/ui.js';
 import {fittingTitle} from '../src/calendar-layout.js';import {documentFromHTML} from './support-dom.mjs';
 function dialogs(){
  const previousDocument=globalThis.document,previousMedia=globalThis.matchMedia;let last;
@@ -22,7 +22,7 @@ test('External confirmation shows the destination, preserves Cancel, and only Pr
  const f=dialogs();let proceeds=0,remembered;
  try{
   const url=new URL('https://solar.feualabang.edu.ph/course/registration?term=1&year=20262027');
-  const markup=externalConfirmationMarkup(url);assert.ok(markup.includes('solar.feualabang.edu.ph'));assert.ok(markup.includes('Do not ask again'));assert.ok(!markup.includes('<script'));
+  const markup=externalConfirmationMarkup(url);assert.ok(markup.includes('solar.feualabang.edu.ph'));assert.ok(!markup.includes('Do not ask again'));assert.ok(externalConfirmationFooter().includes('Do not ask again'));assert.ok(!markup.includes('<script'));
   let response=confirmExternalNavigation(url,remember=>{proceeds++;remembered=remember;});await f.last.cancel.onclick();assert.equal(await response,false);assert.equal(proceeds,0);
   response=confirmExternalNavigation(url,remember=>{proceeds++;remembered=remember;});f.last.controls['[data-remember-external]'].checked=true;await f.last.controls['[data-proceed-external]'].onclick();assert.equal(await response,true);assert.equal(proceeds,1);assert.equal(remembered,true);
  }finally{f.restore();}

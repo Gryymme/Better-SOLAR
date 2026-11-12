@@ -2,705 +2,747 @@ TAP version 13
 # Subtest: Collector discovers page-specific and year-dependent options, preserves selection association and isolates failures
 ok 1 - Collector discovers page-specific and year-dependent options, preserves selection association and isolates failures
   ---
-  duration_ms: 117.800882
+  duration_ms: 123.701584
   type: 'test'
   ...
 # Subtest: Retry reruns failed work, verifies identity again, and preserves other successful terms
 ok 2 - Retry reruns failed work, verifies identity again, and preserves other successful terms
   ---
-  duration_ms: 16.69993
+  duration_ms: 11.370538
   type: 'test'
   ...
 # Subtest: Settings deletion clears completed collection, all private cache metadata and progress while retaining the chosen theme and link-confirmation preference
 ok 3 - Settings deletion clears completed collection, all private cache metadata and progress while retaining the chosen theme and link-confirmation preference
   ---
-  duration_ms: 0.735325
+  duration_ms: 1.330075
   type: 'test'
   ...
 # Subtest: Deletion stops an in-flight task and late collector alarms do not recreate academic records
 ok 4 - Deletion stops an in-flight task and late collector alarms do not recreate academic records
   ---
-  duration_ms: 41.324527
+  duration_ms: 42.225765
   type: 'test'
   ...
 # Subtest: Shared timetable has all six day headers, paired meetings, green block class, title truncation and physical/online rooms
 ok 5 - Shared timetable has all six day headers, paired meetings, green block class, title truncation and physical/online rooms
   ---
-  duration_ms: 4.742569
+  duration_ms: 5.607365
   type: 'test'
   ...
 # Subtest: Timetable uses responsive percentage lanes and a shared time scale for short/overlapping meetings
 ok 6 - Timetable uses responsive percentage lanes and a shared time scale for short/overlapping meetings
   ---
-  duration_ms: 0.590124
+  duration_ms: 1.163016
   type: 'test'
   ...
 # Subtest: Navigation/footer keep every required destination and exact credit
 ok 7 - Navigation/footer keep every required destination and exact credit
   ---
-  duration_ms: 2.744052
+  duration_ms: 0.660321
   type: 'test'
   ...
 # Subtest: Term selectors use available data, and reusable tables escape headers
 ok 8 - Term selectors use available data, and reusable tables escape headers
   ---
-  duration_ms: 1.307486
+  duration_ms: 1.157167
   type: 'test'
   ...
 # Subtest: Demo is explicit synthetic data and never writes to the database
 ok 9 - Demo is explicit synthetic data and never writes to the database
   ---
-  duration_ms: 1.923477
+  duration_ms: 1.344638
   type: 'test'
   ...
 # Subtest: Course tables have conservative column widths, wrapped meeting entries, and a bounded accessible scrolling region
 ok 10 - Course tables have conservative column widths, wrapped meeting entries, and a bounded accessible scrolling region
   ---
-  duration_ms: 1.170357
+  duration_ms: 1.854171
   type: 'test'
   ...
 # Subtest: User Profile and current-page dropdowns use SVG chevrons and stable header space
 ok 11 - User Profile and current-page dropdowns use SVG chevrons and stable header space
   ---
-  duration_ms: 2.061208
+  duration_ms: 4.045016
   type: 'test'
   ...
 # Subtest: Term/year normalization retains source selector values and separate terms
 ok 12 - Term/year normalization retains source selector values and separate terms
   ---
-  duration_ms: 4.19958
+  duration_ms: 4.12533
   type: 'test'
   ...
 # Subtest: Parentheses classify overpayment; blanks never imply amounts
 ok 13 - Parentheses classify overpayment; blanks never imply amounts
   ---
-  duration_ms: 1.429485
+  duration_ms: 1.198494
   type: 'test'
   ...
 # Subtest: Time conversion handles noon, midnight, seconds, ranges and missing times
 ok 14 - Time conversion handles noon, midnight, seconds, ranges and missing times
   ---
-  duration_ms: 0.798785
+  duration_ms: 1.307055
   type: 'test'
   ...
 # Subtest: Occurrence pairing preserves corresponding times and rooms, TH distinct from T
 ok 15 - Occurrence pairing preserves corresponding times and rooms, TH distinct from T
   ---
-  duration_ms: 0.91054
+  duration_ms: 1.490418
   type: 'test'
   ...
 # Subtest: Conflict detection rejects existing and intra-selection overlaps atomically; adjacent intervals allowed
 ok 16 - Conflict detection rejects existing and intra-selection overlaps atomically; adjacent intervals allowed
   ---
-  duration_ms: 1.206596
+  duration_ms: 1.740946
   type: 'test'
   ...
 # Subtest: Filters combine course, section and ALL selected days; zero slots disabled
 ok 17 - Filters combine course, section and ALL selected days; zero slots disabled
   ---
-  duration_ms: 0.669338
+  duration_ms: 0.581769
   type: 'test'
   ...
 # Subtest: Required presentation formats and fixed grade rows
 ok 18 - Required presentation formats and fixed grade rows
   ---
-  duration_ms: 1.501143
+  duration_ms: 0.804807
   type: 'test'
   ...
 # Subtest: AND day filtering requires every selected day, including combined day tokens
 ok 19 - AND day filtering requires every selected day, including combined day tokens
   ---
-  duration_ms: 2.498655
+  duration_ms: 0.752064
   type: 'test'
   ...
 # Subtest: Successful deletion clears this window draft and broadcasts a reset without broadcasting records
 ok 20 - Successful deletion clears this window draft and broadcasts a reset without broadcasting records
   ---
-  duration_ms: 3.230428
+  duration_ms: 4.118884
   type: 'test'
   ...
 # Subtest: Other windows react to extension storage and channel notifications only once per reset
 ok 21 - Other windows react to extension storage and channel notifications only once per reset
   ---
-  duration_ms: 0.391142
+  duration_ms: 0.284868
   type: 'test'
   ...
 # Subtest: A rejected deletion reports the failure and does not announce success or clear a live draft
 ok 22 - A rejected deletion reports the failure and does not announce success or clear a live draft
   ---
-  duration_ms: 1.133719
+  duration_ms: 0.650181
   type: 'test'
   ...
 # Subtest: Seven categories are stored separately; repeat scrape upserts and terms never overwrite each other
 ok 23 - Seven categories are stored separately; repeat scrape upserts and terms never overwrite each other
   ---
-  duration_ms: 8.012357
+  duration_ms: 7.759901
   type: 'test'
   ...
 # Subtest: Failed refresh retains the previous successful payload and marks the attempt as failed
 ok 24 - Failed refresh retains the previous successful payload and marks the attempt as failed
   ---
-  duration_ms: 1.635486
+  duration_ms: 0.970575
   type: 'test'
   ...
 # Subtest: Local caches for different verified student identities cannot mix
 ok 25 - Local caches for different verified student identities cannot mix
   ---
-  duration_ms: 5.969519
+  duration_ms: 2.888124
   type: 'test'
   ...
 # Subtest: Deleting local data removes every account, the Canvas feed and job metadata in one transaction
 ok 26 - Deleting local data removes every account, the Canvas feed and job metadata in one transaction
   ---
-  duration_ms: 3.779227
+  duration_ms: 2.763691
   type: 'test'
   ...
 # Subtest: An asynchronous feed request cannot write private data back after a deletion
 ok 27 - An asynchronous feed request cannot write private data back after a deletion
   ---
-  duration_ms: 13.029505
+  duration_ms: 2.007414
   type: 'test'
   ...
 # Subtest: Closing keeps the dialog present during its fade, then restores focus after animation completion
 ok 28 - Closing keeps the dialog present during its fade, then restores focus after animation completion
   ---
-  duration_ms: 2.323541
+  duration_ms: 4.934233
   type: 'test'
   ...
 # Subtest: A new dialog cancels an old close animation without closing the replacement
 ok 29 - A new dialog cancels an old close animation without closing the replacement
   ---
-  duration_ms: 0.504613
+  duration_ms: 1.272985
   type: 'test'
   ...
 # Subtest: Escape uses the close animation, while active data deletion prevents dismissal
 ok 30 - Escape uses the close animation, while active data deletion prevents dismissal
   ---
-  duration_ms: 0.508866
+  duration_ms: 1.528217
   type: 'test'
   ...
 # Subtest: No-slot and unknown-slot rows remain selectable; warning identifies each affected course, and only preview blocks turn red
 ok 31 - No-slot and unknown-slot rows remain selectable; warning identifies each affected course, and only preview blocks turn red
   ---
-  duration_ms: 277.930664
+  duration_ms: 187.397657
   type: 'test'
   ...
 # Subtest: Academics and Enrollment menus preserve academic pages, add exact SOLAR destinations, and remove Canvas from navigation
 ok 32 - Academics and Enrollment menus preserve academic pages, add exact SOLAR destinations, and remove Canvas from navigation
   ---
-  duration_ms: 142.338832
+  duration_ms: 79.485333
   type: 'test'
   ...
 # Subtest: Reminder discovery ignores site chrome and external images, deduplicates PNG sources, and prefers reminder content
 ok 33 - Reminder discovery ignores site chrome and external images, deduplicates PNG sources, and prefers reminder content
   ---
-  duration_ms: 425.498789
+  duration_ms: 252.476894
   type: 'test'
   ...
 # Subtest: Reminders fetches one visible OSES term image and ignores generic images, hidden history and download links
 ok 34 - Reminders fetches one visible OSES term image and ignores generic images, hidden history and download links
   ---
-  duration_ms: 200.823857
+  duration_ms: 118.798088
   type: 'test'
   ...
 # Subtest: Authenticated reminders collection validates PNG bytes and returns an offline image rather than a live network dependency
 ok 35 - Authenticated reminders collection validates PNG bytes and returns an offline image rather than a live network dependency
   ---
-  duration_ms: 34.957158
+  duration_ms: 61.457221
   type: 'test'
   ...
 # Subtest: Expired image responses and oversized PNGs fail explicitly instead of replacing cached images
 ok 36 - Expired image responses and oversized PNGs fail explicitly instead of replacing cached images
   ---
-  duration_ms: 95.583763
+  duration_ms: 152.074226
   type: 'test'
   ...
 # Subtest: The dismissible app report and non-dismissible Settings report contain the same collection failures
 ok 37 - The dismissible app report and non-dismissible Settings report contain the same collection failures
   ---
-  duration_ms: 68.610431
+  duration_ms: 128.959104
   type: 'test'
   ...
 # Subtest: Dialog opening and closing share a centered inverse fade and scale
 ok 38 - Dialog opening and closing share a centered inverse fade and scale
   ---
-  duration_ms: 0.273109
+  duration_ms: 0.440295
   type: 'test'
   ...
 # Subtest: Phone title lines keep complete words within sixteen characters and font scaling remains measured
 ok 39 - Phone title lines keep complete words within sixteen characters and font scaling remains measured
   ---
-  duration_ms: 0.376403
+  duration_ms: 0.632923
   type: 'test'
   ...
 # Subtest: Only HTTP/HTTPS destinations outside the application origin are classified as external websites
 ok 40 - Only HTTP/HTTPS destinations outside the application origin are classified as external websites
   ---
-  duration_ms: 2.735436
+  duration_ms: 3.493237
   type: 'test'
   ...
 # Subtest: Cancel does not open a website or change the confirmation preference
 ok 41 - Cancel does not open a website or change the confirmation preference
   ---
-  duration_ms: 0.687434
+  duration_ms: 0.918562
   type: 'test'
   ...
 # Subtest: Proceed opens once, Do not ask again persists, and Settings can restore confirmation
 ok 42 - Proceed opens once, Do not ask again persists, and Settings can restore confirmation
   ---
-  duration_ms: 1.734036
+  duration_ms: 0.993647
   type: 'test'
   ...
 # Subtest: Repeated clicks cannot stack confirmation dialogs or open an unconfirmed second website
 ok 43 - Repeated clicks cannot stack confirmation dialogs or open an unconfirmed second website
   ---
-  duration_ms: 1.162122
+  duration_ms: 0.840761
   type: 'test'
   ...
 # Subtest: Cross-window preference changes update controls and normal/middle clicks use the same guard
 ok 44 - Cross-window preference changes update controls and normal/middle clicks use the same guard
   ---
-  duration_ms: 1.908404
+  duration_ms: 1.458551
   type: 'test'
   ...
 # Subtest: Script links are rejected and preference storage errors restore the previous setting
 ok 45 - Script links are rejected and preference storage errors restore the previous setting
   ---
-  duration_ms: 1.505238
+  duration_ms: 1.885135
   type: 'test'
   ...
 # Subtest: Montserrat loads all four required weights and caches unmodified font responses
 ok 46 - Montserrat loads all four required weights and caches unmodified font responses
   ---
-  duration_ms: 11.843729
+  duration_ms: 16.250596
   type: 'test'
   ...
 # Subtest: The next offline launch reads the font cache without contacting the font server
 ok 47 - The next offline launch reads the font cache without contacting the font server
   ---
-  duration_ms: 1.757766
+  duration_ms: 1.262655
   type: 'test'
   ...
 # Subtest: Invalid feeds fail rather than erase a cached calendar
 ok 48 - Invalid feeds fail rather than erase a cached calendar
   ---
-  duration_ms: 4.584962
+  duration_ms: 4.497605
   type: 'test'
   ...
 # Subtest: Unfolding, escaped descriptions and UTC times
 ok 49 - Unfolding, escaped descriptions and UTC times
   ---
-  duration_ms: 2.583744
+  duration_ms: 2.803591
   type: 'test'
   ...
 # Subtest: Weekly recurrence count with EXDATE, RDATE and canceled overrides
 ok 50 - Weekly recurrence count with EXDATE, RDATE and canceled overrides
   ---
-  duration_ms: 19.852538
+  duration_ms: 16.187462
   type: 'test'
   ...
 # Subtest: All-day, IANA timezone and monthly negative ordinal recurrence
 ok 51 - All-day, IANA timezone and monthly negative ordinal recurrence
   ---
-  duration_ms: 31.329956
+  duration_ms: 18.373188
   type: 'test'
   ...
 # Subtest: Month-day 31 skips months without that date
 ok 52 - Month-day 31 skips months without that date
   ---
-  duration_ms: 1.890221
+  duration_ms: 1.799615
   type: 'test'
   ...
 # Subtest: Header hysteresis does not flicker across small movements around its collapse threshold
 ok 53 - Header hysteresis does not flicker across small movements around its collapse threshold
   ---
-  duration_ms: 2.364371
+  duration_ms: 2.569428
   type: 'test'
   ...
 # Subtest: Header safely expands at the top including negative overscroll
 ok 54 - Header safely expands at the top including negative overscroll
   ---
-  duration_ms: 0.347365
+  duration_ms: 0.684045
   type: 'test'
   ...
 # Subtest: Every curriculum group receives the same five column widths
 ok 55 - Every curriculum group receives the same five column widths
   ---
-  duration_ms: 2.490511
+  duration_ms: 2.586964
   type: 'test'
   ...
 # Subtest: SAF wraps day/time/room entries individually and retains every required column
 ok 56 - SAF wraps day/time/room entries individually and retains every required column
   ---
-  duration_ms: 1.250715
+  duration_ms: 1.309686
   type: 'test'
   ...
 # Subtest: Failed and empty grades always render inside the rounded result container
 ok 57 - Failed and empty grades always render inside the rounded result container
   ---
-  duration_ms: 196.76478
+  duration_ms: 149.025877
   type: 'test'
   ...
 # Subtest: Dialog scrolling is isolated from the rounded shell and fixed footer
 ok 58 - Dialog scrolling is isolated from the rounded shell and fixed footer
   ---
-  duration_ms: 55.65791
+  duration_ms: 53.385811
   type: 'test'
   ...
 # Subtest: Calendar titles truncate only when required and use three literal dots
 ok 59 - Calendar titles truncate only when required and use three literal dots
   ---
-  duration_ms: 0.938538
+  duration_ms: 0.752441
   type: 'test'
   ...
 # Subtest: Full event details remain in the dialog, with a prominent Canvas button next to Close
 ok 60 - Full event details remain in the dialog, with a prominent Canvas button next to Close
   ---
-  duration_ms: 25.87829
+  duration_ms: 41.46933
   type: 'test'
   ...
 # Subtest: Footer copyright is placed between the brand and social icons
 ok 61 - Footer copyright is placed between the brand and social icons
   ---
-  duration_ms: 0.24643
+  duration_ms: 0.177638
   type: 'test'
   ...
 # Subtest: Settings replaces the old direct theme action and unavailable rows use no visible text badge
 ok 62 - Settings replaces the old direct theme action and unavailable rows use no visible text badge
   ---
-  duration_ms: 0.924575
+  duration_ms: 0.917347
   type: 'test'
   ...
 # Subtest: First timetable line and meetings share the same padded time area
 ok 63 - First timetable line and meetings share the same padded time area
   ---
-  duration_ms: 55.3494
+  duration_ms: 58.396937
   type: 'test'
   ...
 # Subtest: Profile maps labels, dynamic heading and omits Grades Viewing
 ok 64 - Profile maps labels, dynamic heading and omits Grades Viewing
   ---
-  duration_ms: 70.994921
+  duration_ms: 80.963047
   type: 'test'
   ...
 # Subtest: Balance parser handles spelling variation, reordered payment columns, and all payments
 ok 65 - Balance parser handles spelling variation, reordered payment columns, and all payments
   ---
-  duration_ms: 93.018512
+  duration_ms: 75.28481
   type: 'test'
   ...
 # Subtest: Curriculum group rows stay separate from all associated course records
 ok 66 - Curriculum group rows stay separate from all associated course records
   ---
-  duration_ms: 70.481808
+  duration_ms: 64.373416
   type: 'test'
   ...
 # Subtest: Grades retain missing finals and original decimal strings
 ok 67 - Grades retain missing finals and original decimal strings
   ---
-  duration_ms: 42.622136
+  duration_ms: 70.858711
   type: 'test'
   ...
 # Subtest: SAF maps multiple pairs per cell and retains every variable fee/date label
 ok 68 - SAF maps multiple pairs per cell and retains every variable fee/date label
   ---
-  duration_ms: 48.463936
+  duration_ms: 64.741015
   type: 'test'
   ...
 # Subtest: Course offerings keep every row and raw day/time/room values
 ok 69 - Course offerings keep every row and raw day/time/room values
   ---
-  duration_ms: 338.181776
+  duration_ms: 57.717314
   type: 'test'
   ...
 # Subtest: Selectors are discovered dynamically, with original values and no disabled placeholders
 ok 70 - Selectors are discovered dynamically, with original values and no disabled placeholders
   ---
-  duration_ms: 35.79795
+  duration_ms: 62.815466
   type: 'test'
   ...
 # Subtest: Expired sessions and changed structure fail explicitly; explicit empty pages accepted
 ok 71 - Expired sessions and changed structure fail explicitly; explicit empty pages accepted
   ---
-  duration_ms: 106.298826
+  duration_ms: 140.158916
   type: 'test'
   ...
 # Subtest: Balance amount may be outside a nested heading label
 ok 72 - Balance amount may be outside a nested heading label
   ---
-  duration_ms: 33.856618
+  duration_ms: 43.937778
   type: 'test'
   ...
 # Subtest: Stale-result predicate requires a fresh document or settled result mutation and matching selection
 ok 73 - Stale-result predicate requires a fresh document or settled result mutation and matching selection
   ---
-  duration_ms: 36.902449
+  duration_ms: 52.400682
   type: 'test'
   ...
 # Subtest: Normal submission sets year before dependent term, rejects stale AJAX and accepts a newly inserted results table
 ok 74 - Normal submission sets year before dependent term, rejects stale AJAX and accepts a newly inserted results table
   ---
-  duration_ms: 230.172144
+  duration_ms: 161.718484
   type: 'test'
   ...
 # Subtest: Normal submission refuses forms directed outside the authenticated SOLAR origin
 ok 75 - Normal submission refuses forms directed outside the authenticated SOLAR origin
   ---
-  duration_ms: 31.424888
+  duration_ms: 37.535969
   type: 'test'
   ...
 # Subtest: Reported nested SAF structure maps Student \#, embedded period, complete fees and exact decimal values
 ok 76 - Reported nested SAF structure maps Student \#, embedded period, complete fees and exact decimal values
   ---
-  duration_ms: 107.699285
+  duration_ms: 48.531646
   type: 'test'
   ...
 # Subtest: Empty and hidden duplicate assessment forms do not mask the populated fee table
 ok 77 - Empty and hidden duplicate assessment forms do not mask the populated fee table
   ---
-  duration_ms: 93.957672
+  duration_ms: 45.097989
   type: 'test'
   ...
 # Subtest: Fee wrapper and split payment tables retain all source rows without outer layout duplicates
 ok 78 - Fee wrapper and split payment tables retain all source rows without outer layout duplicates
   ---
-  duration_ms: 48.706979
+  duration_ms: 56.767186
   type: 'test'
   ...
 # Subtest: Term and school year come from the live selected option when absent from summary labels
 ok 79 - Term and school year come from the live selected option when absent from summary labels
   ---
-  duration_ms: 55.216722
+  duration_ms: 45.94954
   type: 'test'
   ...
 # Subtest: Summary labels in a shared outer layout table remain readable without ingesting nested course/fee cells
 ok 80 - Summary labels in a shared outer layout table remain readable without ingesting nested course/fee cells
   ---
-  duration_ms: 43.571312
+  duration_ms: 47.842879
   type: 'test'
   ...
 # Subtest: Fee detection falls back to live row labels when assessment classes change
 ok 81 - Fee detection falls back to live row labels when assessment classes change
   ---
-  duration_ms: 33.40575
+  duration_ms: 47.143987
   type: 'test'
   ...
 # Subtest: Hidden historical fee tables are not accepted as current visible results
 ok 82 - Hidden historical fee tables are not accepted as current visible results
   ---
-  duration_ms: 44.721296
+  duration_ms: 36.175953
   type: 'test'
   ...
 # Subtest: A collapsed collection card exposes only its generic title and progress, with specific work and retry inside details
 ok 83 - A collapsed collection card exposes only its generic title and progress, with specific work and retry inside details
   ---
-  duration_ms: 54.621285
+  duration_ms: 95.049946
   type: 'test'
   ...
 # Subtest: Progress transitions resume from the currently displayed width across a complete DOM replacement
 ok 84 - Progress transitions resume from the currently displayed width across a complete DOM replacement
   ---
-  duration_ms: 0.497002
+  duration_ms: 0.970261
   type: 'test'
   ...
 # Subtest: Dialog opening stays centered and closing reverses its fade and scale; sidebar still slides
 ok 85 - Dialog opening stays centered and closing reverses its fade and scale; sidebar still slides
   ---
-  duration_ms: 1.645575
+  duration_ms: 1.960294
   type: 'test'
   ...
 # Subtest: Table scroll cue fits half a following row, including variable-height wrapped rows, and leaves complete tables alone
 ok 86 - Table scroll cue fits half a following row, including variable-height wrapped rows, and leaves complete tables alone
   ---
-  duration_ms: 0.504201
+  duration_ms: 0.411485
   type: 'test'
   ...
 # Subtest: Table fitting uses unscaled row sizes while a dialog animates, and recalculates after filtering
 ok 87 - Table fitting uses unscaled row sizes while a dialog animates, and recalculates after filtering
   ---
-  duration_ms: 0.792939
+  duration_ms: 0.621431
   type: 'test'
   ...
 # Subtest: Compact navigation has a single menu control before the brand at every narrow breakpoint
 ok 88 - Compact navigation has a single menu control before the brand at every narrow breakpoint
   ---
-  duration_ms: 66.934147
+  duration_ms: 72.626888
   type: 'test'
   ...
 # Subtest: Weekly meeting text keeps bold semantic code/title, one metadata class per time/room, and non-padded clock hours
 ok 89 - Weekly meeting text keeps bold semantic code/title, one metadata class per time/room, and non-padded clock hours
   ---
-  duration_ms: 189.509379
+  duration_ms: 111.918144
   type: 'test'
   ...
 # Subtest: Mobile course wrapping preserves whole words, fitting at most sixteen characters per line
 ok 90 - Mobile course wrapping preserves whole words, fitting at most sixteen characters per line
   ---
-  duration_ms: 1.039844
+  duration_ms: 1.887901
   type: 'test'
   ...
 # Subtest: The section picker searches, commits via Enter, moves by keyboard, and restores on Escape
 ok 91 - The section picker searches, commits via Enter, moves by keyboard, and restores on Escape
   ---
-  duration_ms: 17.677737
+  duration_ms: 19.768195
   type: 'test'
   ...
 # Subtest: Clearing a section resets the filter, and a removed picker cannot commit a late blur
 ok 92 - Clearing a section resets the filter, and a removed picker cannot commit a late blur
   ---
-  duration_ms: 1.063825
+  duration_ms: 0.756663
   type: 'test'
   ...
 # Subtest: The failed-work button belongs inside collapsed cache details and only exists for failures
 ok 93 - The failed-work button belongs inside collapsed cache details and only exists for failures
   ---
-  duration_ms: 82.656432
+  duration_ms: 117.162244
   type: 'test'
   ...
 # Subtest: Section matching searches every entry, deduplicates and prioritizes prefixes with numeric sorting
 ok 94 - Section matching searches every entry, deduplicates and prioritizes prefixes with numeric sorting
   ---
-  duration_ms: 20.310442
+  duration_ms: 18.69044
   type: 'test'
   ...
 # Subtest: A long section list displays at most six option rows and remains within the viewport
 ok 95 - A long section list displays at most six option rows and remains within the viewport
   ---
-  duration_ms: 0.265021
+  duration_ms: 0.540001
   type: 'test'
   ...
 # Subtest: The bounded menu opens above low controls and clamps its width on narrow screens
 ok 96 - The bounded menu opens above low controls and clamps its width on narrow screens
   ---
-  duration_ms: 0.149456
+  duration_ms: 0.278323
   type: 'test'
   ...
 # Subtest: Section controls are searchable accessible comboboxes without an unbounded native datalist
 ok 97 - Section controls are searchable accessible comboboxes without an unbounded native datalist
   ---
-  duration_ms: 71.316193
+  duration_ms: 49.987468
+  type: 'test'
+  ...
+# Subtest: Visualizer can accept existing and newly selected time overlaps while still rejecting duplicates and invalid meeting pairs
+ok 98 - Visualizer can accept existing and newly selected time overlaps while still rejecting duplicates and invalid meeting pairs
+  ---
+  duration_ms: 3.169794
+  type: 'test'
+  ...
+# Subtest: Overlaps share different lanes within their own group and later or adjacent meetings regain full day width
+ok 99 - Overlaps share different lanes within their own group and later or adjacent meetings regain full day width
+  ---
+  duration_ms: 0.680564
+  type: 'test'
+  ...
+# Subtest: Three-way and nested overlaps allocate enough side-by-side columns without narrowing independent groups
+ok 100 - Three-way and nested overlaps allocate enough side-by-side columns without narrowing independent groups
+  ---
+  duration_ms: 0.244206
+  type: 'test'
+  ...
+# Subtest: Shared timetable uses group columns and limits only overlapping block titles to twenty characters
+ok 101 - Shared timetable uses group columns and limits only overlapping block titles to twenty characters
+  ---
+  duration_ms: 133.425814
+  type: 'test'
+  ...
+# Subtest: Narrow course codes separate letters and numbers using the requested display format without changing the original code
+ok 102 - Narrow course codes separate letters and numbers using the requested display format without changing the original code
+  ---
+  duration_ms: 58.074105
+  type: 'test'
+  ...
+# Subtest: A shared font fits full title words into narrow lanes without splitting or replacing their letters
+ok 103 - A shared font fits full title words into narrow lanes without splitting or replacing their letters
+  ---
+  duration_ms: 0.816494
+  type: 'test'
+  ...
+# Subtest: External checkbox is below the divider in the same footer as Cancel and Proceed, outside the scrolling body
+ok 104 - External checkbox is below the divider in the same footer as Cancel and Proceed, outside the scrolling body
+  ---
+  duration_ms: 64.790583
   type: 'test'
   ...
 # Subtest: Theme changes fade their colors, restart safely on a quick reversal, and skip animation on first load/reduced motion
-ok 98 - Theme changes fade their colors, restart safely on a quick reversal, and skip animation on first load/reduced motion
+ok 105 - Theme changes fade their colors, restart safely on a quick reversal, and skip animation on first load/reduced motion
   ---
-  duration_ms: 11.888309
+  duration_ms: 1.516268
   type: 'test'
   ...
 # Subtest: Light is default even when the OS requests dark appearance
-ok 99 - Light is default even when the OS requests dark appearance
+ok 106 - Light is default even when the OS requests dark appearance
   ---
-  duration_ms: 1.550923
+  duration_ms: 1.096713
   type: 'test'
   ...
 # Subtest: Explicit dark preference is preserved across initialization and can be toggled back to light
-ok 100 - Explicit dark preference is preserved across initialization and can be toggled back to light
+ok 107 - Explicit dark preference is preserved across initialization and can be toggled back to light
   ---
-  duration_ms: 0.352466
+  duration_ms: 0.352555
   type: 'test'
   ...
 # Subtest: Clearing a saved theme returns every connected preview window to light
-ok 101 - Clearing a saved theme returns every connected preview window to light
+ok 108 - Clearing a saved theme returns every connected preview window to light
   ---
-  duration_ms: 0.399403
+  duration_ms: 0.423603
   type: 'test'
   ...
 # Subtest: Assessment has its own title and the shared Academics eyebrow, while balance retains its title
-ok 102 - Assessment has its own title and the shared Academics eyebrow, while balance retains its title
+ok 109 - Assessment has its own title and the shared Academics eyebrow, while balance retains its title
   ---
-  duration_ms: 84.230521
+  duration_ms: 204.375534
   type: 'test'
   ...
 # Subtest: Courses Offered belongs to Enrollment in both desktop and sidebar navigation
-ok 103 - Courses Offered belongs to Enrollment in both desktop and sidebar navigation
+ok 110 - Courses Offered belongs to Enrollment in both desktop and sidebar navigation
   ---
-  duration_ms: 56.625573
+  duration_ms: 80.200305
   type: 'test'
   ...
 # Subtest: Calendar places connection first, then Open Canvas, and month controls use accessible SVG arrows
-ok 104 - Calendar places connection first, then Open Canvas, and month controls use accessible SVG arrows
+ok 111 - Calendar places connection first, then Open Canvas, and month controls use accessible SVG arrows
   ---
-  duration_ms: 49.957824
+  duration_ms: 69.040628
   type: 'test'
   ...
 # Subtest: Editable course blocks are keyboard-accessible removal targets and contain no separate X button
-ok 105 - Editable course blocks are keyboard-accessible removal targets and contain no separate X button
+ok 112 - Editable course blocks are keyboard-accessible removal targets and contain no separate X button
   ---
-  duration_ms: 272.16038
+  duration_ms: 96.963872
   type: 'test'
   ...
 # Subtest: A report starts collapsed and an explicitly expanded report can be preserved on refresh
-ok 106 - A report starts collapsed and an explicitly expanded report can be preserved on refresh
+ok 113 - A report starts collapsed and an explicitly expanded report can be preserved on refresh
   ---
-  duration_ms: 195.591012
+  duration_ms: 76.734101
   type: 'test'
   ...
 # Subtest: Mobile course code and title share one measured font while preserving words and a sixteen-character maximum
-ok 107 - Mobile course code and title share one measured font while preserving words and a sixteen-character maximum
+ok 114 - Mobile course code and title share one measured font while preserving words and a sixteen-character maximum
   ---
-  duration_ms: 0.600475
+  duration_ms: 1.845837
   type: 'test'
   ...
 # Subtest: Mobile axis labels omit minutes while content heights use just content, padding and borders
-ok 108 - Mobile axis labels omit minutes while content heights use just content, padding and borders
+ok 115 - Mobile axis labels omit minutes while content heights use just content, padding and borders
   ---
-  duration_ms: 104.7549
+  duration_ms: 133.996224
   type: 'test'
   ...
 # Subtest: Course removal confirmation identifies the course, waits for a decision, and resolves Cancel versus Remove
-ok 109 - Course removal confirmation identifies the course, waits for a decision, and resolves Cancel versus Remove
+ok 116 - Course removal confirmation identifies the course, waits for a decision, and resolves Cancel versus Remove
   ---
-  duration_ms: 1.51568
+  duration_ms: 2.913933
   type: 'test'
   ...
 # Subtest: Course actions offer selected course, all courses, or Cancel as distinct decisions
-ok 110 - Course actions offer selected course, all courses, or Cancel as distinct decisions
+ok 117 - Course actions offer selected course, all courses, or Cancel as distinct decisions
   ---
-  duration_ms: 2.761886
+  duration_ms: 5.229808
   type: 'test'
   ...
 # Subtest: External confirmation shows the destination, preserves Cancel, and only Proceed passes the checkbox decision
-ok 111 - External confirmation shows the destination, preserves Cancel, and only Proceed passes the checkbox decision
+ok 118 - External confirmation shows the destination, preserves Cancel, and only Proceed passes the checkbox decision
   ---
-  duration_ms: 0.870387
+  duration_ms: 1.46011
   type: 'test'
   ...
 # Subtest: Only the OSES term-specific Alabang PNG is shown, including future terms, and unrelated legacy images stay hidden
-ok 112 - Only the OSES term-specific Alabang PNG is shown, including future terms, and unrelated legacy images stay hidden
+ok 119 - Only the OSES term-specific Alabang PNG is shown, including future terms, and unrelated legacy images stay hidden
   ---
-  duration_ms: 38.630747
+  duration_ms: 56.2382
   type: 'test'
   ...
 # Subtest: Registration and COR links carry a northeast external-link icon
-ok 113 - Registration and COR links carry a northeast external-link icon
+ok 120 - Registration and COR links carry a northeast external-link icon
   ---
-  duration_ms: 33.15152
+  duration_ms: 43.161709
   type: 'test'
   ...
 # Subtest: Remaining Slots has more dedicated width, and project styles never force character wrapping
-ok 114 - Remaining Slots has more dedicated width, and project styles never force character wrapping
+ok 121 - Remaining Slots has more dedicated width, and project styles never force character wrapping
   ---
-  duration_ms: 73.27468
+  duration_ms: 90.412723
   type: 'test'
   ...
 # Subtest: Leaving each term-selector page resets its selection without touching another page
-ok 115 - Leaving each term-selector page resets its selection without touching another page
+ok 122 - Leaving each term-selector page resets its selection without touching another page
   ---
-  duration_ms: 1.03195
+  duration_ms: 1.588162
   type: 'test'
   ...
 # Subtest: Submitting or refreshing the current page preserves its selection
-ok 116 - Submitting or refreshing the current page preserves its selection
+ok 123 - Submitting or refreshing the current page preserves its selection
   ---
-  duration_ms: 0.170497
+  duration_ms: 0.233026
   type: 'test'
   ...
-1..116
-# tests 116
+1..123
+# tests 123
 # suites 0
-# pass 116
+# pass 123
 # fail 0
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 2124.579754
+# duration_ms 1693.585024

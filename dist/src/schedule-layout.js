@@ -4,7 +4,7 @@ export function hourHeightFor(measurements,baseline=46){
 }
 const mounted=new Map();
 const length=text=>Array.from(text).length;
-function displayWords(text,maxCharacters){return String(text).trim().split(/\s+/).filter(Boolean).map(word=>length(word)>maxCharacters?Array.from(word).slice(0,maxCharacters-3).join('')+'...':word);}
+function displayWords(text){return String(text).trim().split(/\s+/).filter(Boolean);}
 export function wrapCourseText(text,width,measure,maxCharacters=16){
  const lines=[];let line='';
  for(const word of displayWords(text,maxCharacters)){
@@ -15,9 +15,16 @@ export function wrapCourseText(text,width,measure,maxCharacters=16){
 }
 let measureContext;
 export function courseFontSize(lines,width,measure,baseline=9){const widest=Math.max(1,...lines.map(measure));return Math.min(baseline,baseline*Math.max(1,width)/widest);}
+export function courseCodeLines(code,width,measure){
+ const text=String(code||'');if(measure(text)<=width+.1)return [text];
+ const match=text.match(/^([a-z]+)(\d+)([a-z]*)$/i);if(!match)return [text];
+ const digits=match[2].length===4&&match[2].startsWith('0')?match[2].slice(1):match[2];
+ return [match[1]+'-',digits+match[3]];
+}
 export function courseTextLayout(texts,width,measure,baseline=9){
- const fontSize=courseFontSize(texts.flatMap(text=>displayWords(text,16)),width,measure,baseline);
- return {fontSize,lines:texts.map(text=>wrapCourseText(text,width,value=>measure(value)*fontSize/baseline))};
+ const code=courseCodeLines(texts[0],width,measure);
+ const fontSize=courseFontSize([...code,...texts.slice(1).flatMap(displayWords)],width,measure,baseline);
+ return {fontSize,lines:[code,...texts.slice(1).map(text=>wrapCourseText(text,width,value=>measure(value)*fontSize/baseline))]};
 }
 export const compactHour=minutes=>`${Math.floor(minutes/60)%12||12} ${minutes>=720?'PM':'AM'}`;
 export const compactBlockHeight=(contentHeight,paddingTop,paddingBottom,borders=0)=>Math.ceil(contentHeight+paddingTop+paddingBottom+borders);
@@ -32,7 +39,7 @@ function fitText(grid){
    content.style.removeProperty('--course-font-size');
    for(const element of elements)element.style.removeProperty('--course-font-size');
    let layout;
-   if(mobile&&elements.length){
+   if(elements.length){
      const style=getComputedStyle(elements[0]),baseline=parseFloat(style.fontSize);
      measureContext.font=`${style.fontWeight} ${baseline}px ${style.fontFamily}`;
      layout=courseTextLayout(elements.map(element=>element.dataset.courseText),width,value=>measureContext.measureText(value).width,baseline);
@@ -40,7 +47,7 @@ function fitText(grid){
    }
    for(const [index,element] of elements.entries()){
      const original=element.dataset.courseText;
-     if(mobile){
+     if(layout){
        const lines=layout.lines[index];
        element.replaceChildren(...lines.map(value=>{const line=document.createElement('span');line.className='course-text-line';line.textContent=value;return line;}));
      }else element.textContent=original;

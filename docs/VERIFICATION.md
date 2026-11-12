@@ -1,6 +1,6 @@
 # Verification and acceptance report
 
-Date: November 11, 2026. Updated for version **1.0.7**.
+Date: November 12, 2026. Updated for version **1.0.8**.
 
 This revision adds regression coverage for the reported nested SAF markup and UI corrections. See `CHANGELOG-1.0.1.md` for the issue-to-change mapping. All test results are recorded in the rebuilt `qa/` logs.
 
@@ -146,3 +146,18 @@ Manual acceptance for this revision:
 3. Try navigation, calendar event, Open Canvas, reminders and footer links. Cancel must open nothing. Proceed opens the chosen destination. Do not ask again suppresses future external prompts; Settings restores them. Repeat by keyboard and middle click, in the extension popup, after reopening, and in another app window.
 4. Switch Light → Dark → Light quickly and from another app window. Inspect the smooth colors, neutral dark page/cards/dialogs/borders and preserved intentional green/red/amber elements. Repeat with reduced motion.
 5. Collect Enrollment Reminders while signed in. Confirm only the displayed OSES term-specific Alabang PNG is downloaded and shown, including a different term filename. Other page images and download links must be ignored. Reopen offline, then delete data and confirm the image is removed while the non-private appearance/link preferences remain.
+
+
+## 1.0.8 additions
+
+New automated regressions cover allowing existing/new overlap combinations while preserving duplicate and invalid-meeting checks; two-way, nested and three-way overlap groups; transitive groups, adjacent meetings, independent days and full-width recovery; unchanged source meeting objects; shared-renderer geometry for editable and read-only timetables; the 20-character shared-title cap with full accessible descriptions; code formatting including numeric suffixes; common font fitting without breaking full title words; and the external confirmation checkbox inside the footer alongside its actions instead of in the scrolling body.
+
+The optional browser script now expects accepted overlapping individual selections and verifies shared-column/title metadata. It retains duplicate block validation, no-slot warnings, removal controls, and adds a footer checkbox/action alignment check. Native browser execution remains subject to the workspace's Chromium socket restriction; no passing visual review is claimed.
+
+Manual acceptance for this revision:
+
+1. Open external links from the main app and extension popup at desktop and 320/390 px widths. Confirm the checkbox sits below the divider on one footer row beside Cancel/Proceed, remains keyboard-accessible, and still remembers/resets the preference correctly.
+2. Add two courses with overlapping times, both together and against an existing visualizer course. Add a block with internal or existing overlaps. Every valid selected course must be included. Duplicate rows must still be rejected and full-course warnings must remain.
+3. Compare Dashboard, Schedule and Assessment and the visualizer using two-way/three-way, nested and chain overlaps. Blocks sharing times must occupy different lanes; later unrelated meetings and other days must keep full column width. Adjacent meetings must not be treated as overlapping.
+4. Resize shared blocks to narrow widths. Verify `CCS0001` → `CCS-` / `001` and `GED0004A` → `GED-` / `004A` when wrapping is needed. Original codes in records and course-action dialogs must remain unchanged.
+5. Verify shared block titles contain at most 20 displayed characters including ellipsis. Code/title fonts must match; full displayed words must fit without character-level wrapping. An individual long word may exceed the earlier 16-character line preference, but must stay on one fitted line. Full minute-accurate times, room labels, hover/removal and mobile content-fitted heights must remain.

@@ -398,3 +398,16 @@ dialog[open]{transform-origin:center center}
 [data-theme=dark] dialog::backdrop{background:#0009}
 @media(max-width:700px){.checkbox-label{font-size:12px}}
 @media(prefers-reduced-motion:reduce){.theme-transition,.theme-transition *,.theme-transition dialog::backdrop{transition:none!important}.course-block.removable:hover{transform:none}}
+
+/* 1.0.8: shared meeting typography and a single-row external-confirmation footer. */
+.course-block .course-code,.course-block .course-title{font-size:var(--course-font-size,12px);font-weight:700;line-height:1.2}
+.external-confirmation .modal-footer{display:flex;align-items:center;justify-content:space-between;flex-wrap:nowrap;gap:12px}
+.external-confirmation .modal-footer .checkbox-label{margin-right:auto;white-space:nowrap;font-size:13px;gap:8px}
+.external-confirm-actions{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.external-confirm-actions button{white-space:nowrap}
+@media(max-width:700px){
+ .course-block .course-code,.course-block .course-title{font-size:var(--course-font-size,9px)}
+ .external-confirmation .modal-footer{gap:8px;padding-left:12px;padding-right:12px}
+ .external-confirmation .modal-footer .checkbox-label{font-size:11px;gap:6px}
+ .external-confirm-actions{gap:6px}.external-confirm-actions button{font-size:11px;padding:7px 8px;min-height:36px}
+}
