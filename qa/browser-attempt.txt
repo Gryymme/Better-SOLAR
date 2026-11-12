@@ -1,0 +1,3 @@
+Native browser attempt for 1.0.7
+Exit status: 1
+[pid=18][err] [18:18:1111/192553.567466:FATAL:chrome/browser/process_singleton_posix.cc:297] Check failed: . socket() failed: Operation not permitted (1)

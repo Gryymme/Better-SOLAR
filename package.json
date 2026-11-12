@@ -1,0 +1,17 @@
+{
+  "name": "better-solar",
+  "version": "1.0.7",
+  "private": true,
+  "type": "module",
+  "description": "Local-first FEU Alabang SOLAR companion extension",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "check": "node scripts/check.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "preview": "python3 -m http.server 4173 --directory dist",
+    "fonts": "node scripts/vendor-fonts.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
