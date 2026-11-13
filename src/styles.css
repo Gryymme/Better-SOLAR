@@ -495,3 +495,55 @@ details[data-collection-report]:not([open])>.cache-details{display:none}
 [data-transfer-preview]{margin-top:16px;padding:14px;border:1px solid var(--border);border-radius:12px}
 [data-transfer-result]{margin:14px 0 0;font-size:13px}
 @media(max-width:450px){.solar-shortcuts{grid-template-columns:1fr}.solar-shortcuts .button-link,[data-transfer-result]{font-size:12px}}
+
+/* 2.3: opaque mobile top edge and local, full-screen schedule image export. */
+@media(max-width:700px){html{background:var(--browser-chrome,var(--brand))}}
+.schedule-export-actions{display:flex;justify-content:flex-end;margin-top:18px}
+.schedule-export-actions button{font-size:12px}
+.section-option{touch-action:pan-y}
+dialog.schedule-png[open]{display:block;position:fixed;inset:0;margin:0;width:100vw;max-width:none;height:100vh;height:100dvh;max-height:none;border:0;border-radius:0;padding:0;background:var(--page);color:var(--ink)}
+.schedule-png .modal-shell{height:100%;max-height:100%;border-radius:0}
+.schedule-png .modal-header{display:flex;align-items:center;justify-content:space-between;background:var(--surface);border-bottom:1px solid var(--border);padding:14px 22px;gap:16px}
+.schedule-png .modal-header h2{font-size:17px;letter-spacing:-.3px}
+.schedule-png .modal-subtitle{font-size:11px;margin-top:3px}
+.png-toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.png-toolbar button{font-size:12px;white-space:nowrap;min-height:38px;padding:8px 12px}
+.png-toolbar .icon-button{width:38px;padding:8px}
+.schedule-png .modal-body{flex:1;overflow:auto;margin:0;padding:24px 28px 18px;scrollbar-gutter:auto}
+.png-stage{display:flex;align-items:flex-start;justify-content:center;padding-right:40px;min-width:0}
+.png-sheet{position:relative;max-width:100%;flex:none;border-radius:20px;box-shadow:0 8px 30px #0000000c}
+.png-sheet canvas{display:block;width:100%;height:auto;border-radius:20px;background:#fff}
+.png-resize{position:absolute;left:calc(100% + 10px);top:70px;width:30px;min-height:114px;display:flex;flex-direction:column;gap:8px;padding:8px 2px;border-color:#2e844c40;background:#2e844c0c;color:var(--brand-deep);border-radius:14px;cursor:ew-resize;touch-action:none;user-select:none}
+.png-resize small{font-size:7px;line-height:1.4;color:inherit;letter-spacing:.5px}
+.png-sizing{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:12px 20px;margin:22px auto 0;max-width:850px}
+.png-sizing label{display:flex;flex-direction:row;align-items:center;gap:12px;font-size:12px;flex:1;min-width:200px}
+.png-sizing input[type=range]{min-width:0;width:100%;padding:0;min-height:32px;accent-color:var(--brand)}
+.png-sizing output{font-size:11px;color:var(--muted)}
+.png-status{max-width:850px;margin:12px auto 0;font-size:11px;color:var(--muted);min-height:18px;text-align:center}
+.schedule-png[data-image-theme=dark] .modal-body{background:#121212}
+.schedule-png[data-image-theme=dark] :is(.png-status,.png-sizing output,.png-sizing label){color:#b4b4b8}
+.schedule-png[data-image-theme=dark] .png-resize{background:#202522;color:#88c79c;border-color:#4a6854}
+dialog.png-settings{width:min(720px,calc(100vw - 24px))}
+.png-setting-row{display:flex;align-items:center;justify-content:space-between;gap:20px;border-bottom:1px solid var(--border);padding:16px 0;margin-bottom:16px}
+.png-setting-row>label{font-size:13px}.png-setting-row .checkbox-setting{grid-template-columns:minmax(0,1fr) 18px}
+.png-setting-row .checkbox-setting-copy{grid-column:1;grid-row:1}.png-setting-row .checkbox-setting input{grid-column:2;grid-row:1}
+.png-color-control{display:flex;gap:10px;align-items:center}.png-color-control button{font-size:11px;min-height:32px;padding:6px 10px}
+.png-color-control input[type=color]{min-height:36px;height:36px;width:44px;padding:3px;cursor:pointer;border-radius:9px}
+.png-settings .modal-body>p,.png-settings form>p{font-size:12px}
+.png-title-editor label{display:grid;grid-template-columns:110px minmax(0,1fr);gap:14px;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);font-size:12px;font-weight:400}
+.png-title-editor input{width:100%;font-size:12px;min-height:38px}
+@media(max-width:700px){
+ .site-header{height:calc(var(--nav-height) + env(safe-area-inset-top,0px));padding-top:env(safe-area-inset-top,0px);background-image:none;box-shadow:none;filter:none}
+ .site-header.minimized{height:calc(44px + env(safe-area-inset-top,0px));box-shadow:none}
+ .nav-space{height:calc(var(--nav-height) + env(safe-area-inset-top,0px))}
+ .schedule-png .modal-header{flex-wrap:wrap;padding:calc(12px + env(safe-area-inset-top,0px)) 12px 12px;gap:12px}
+ .schedule-png .modal-header h2{font-size:16px}
+ .png-toolbar{justify-content:flex-start;gap:6px;width:100%}.png-toolbar button{font-size:10px;padding:7px 9px;min-height:34px}
+ .png-toolbar .icon-button{width:34px;padding:6px;margin-left:auto}
+ .schedule-png .modal-body{padding:18px 12px calc(18px + env(safe-area-inset-bottom,0px))}
+ .png-stage{padding-right:30px}.png-sheet,.png-sheet canvas{border-radius:12px}
+ .png-resize{left:calc(100% + 5px);top:28px;min-height:84px;width:24px;border-radius:10px}
+ .png-resize small{font-size:6px}.png-sizing{gap:6px;margin-top:14px}.png-sizing label{font-size:10px}
+ .png-sizing output,.png-status{font-size:10px}.png-title-editor label{grid-template-columns:82px minmax(0,1fr);gap:10px;font-size:10px}
+ .png-title-editor input{font-size:11px}.png-setting-row{gap:10px}.png-setting-row>label{font-size:12px}
+}
