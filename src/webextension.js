@@ -10,7 +10,7 @@ export function createExtensionAPI(resolve=()=>globalThis.browser?.runtime?{api:
    if(syncMethods.has(name))return value.bind(parent);
    return (...args)=>new Promise((accept,reject)=>{
      let done=false;const category=name==='tabs.sendMessage'?args[1]?.args?.[0]:args[0]?.args?.[1]?.[0];const longCall=(name==='runtime.sendMessage'&&['IMPORT_DATA','DELETE_DATA'].includes(args[0]?.type))||category!=='User Profile'&&(name==='tabs.sendMessage'?['scan','reminders'].includes(args[1]?.method):name==='scripting.executeScript'&&['scan','reminders'].includes(args[0]?.args?.[0]));const limit=name==='tabs.sendMessage'&&args[1]?.method==='probe'?Math.min(timeout,3000):longCall?Math.max(timeout,120000):timeout;
-     const timer=setTimeout(()=>finish(Error(`${name} did not respond. Return to Better SOLAR and retry collection. Cached records were kept.`)),limit);
+     const timer=name==='downloads.download'&&args[0]?.saveAs?null:setTimeout(()=>finish(Error(`${name} did not respond. Return to Better SOLAR and retry collection. Cached records were kept.`)),limit);
      const finish=(error,result)=>{if(done)return;done=true;clearTimeout(timer);error?reject(error):accept(result);};
      const callback=result=>{const error=api.runtime?.lastError;finish(error?Error(error.message||String(error)):null,result);};
      const invoke=withCallback=>{try{
@@ -37,7 +37,6 @@ export const extension=createExtensionAPI();
 export const mobileBrowser=()=>/Android|iPhone|iPad|iPod|Mobile/i.test(globalThis.navigator?.userAgent||'')||!!(globalThis.navigator?.maxTouchPoints>1&&(/Mac/i.test(globalThis.navigator?.platform||'')||globalThis.KAGI));
 export async function launchApplication(){
  const url=extension.runtime.getURL('app.html');
- if(!mobileBrowser()&&extension.windows?.create){try{return await extension.windows.create({url,type:'normal',width:1440,height:950});}catch{}}
  if(extension.tabs?.create)return extension.tabs.create({url,active:true});
  throw Error('This browser cannot open an extension tab. Open Better SOLAR from its extension menu.');
 }

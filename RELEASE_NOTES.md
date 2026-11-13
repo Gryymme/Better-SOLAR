@@ -1,26 +1,25 @@
-# Better SOLAR for Mobile — v2.3.0
+# Better SOLAR for Mobile — v2.3.2
 
 Released November 13, 2026.
 
-## Fixed
-
-- Section menus in Courses Offered, Add an Individual Course, and Add a Block Section now commit a tapped choice without depending on a follow-up click event.
-- Exact typed sections persist without pressing Enter. Case-insensitive matching restores the portal's canonical section name.
-- Touch scrolling through a long menu does not select an option. Menu placement follows the visible viewport when the keyboard opens.
-- The app's mobile top edge uses an opaque navigation color, a matching browser theme-color hint, and safe-area padding, with page-owned header shadows removed. Browser-owned shading remains controlled by the host.
-
 ## Added
 
-- **Save Schedule as PNG** on every weekly schedule, matching the PC feature set.
-- Full-screen six-day preview, light/dark image mode, draggable resize handle, accessible width slider, and green Save PNG button. Minimum layout width: 850 px; mobile previews scale to fit without exporting only the visible three days.
-- Settings for block color, full titles, optional collected curriculum titles, and custom course titles. Export changes leave saved academic records untouched.
-- A faint current-year Gryymme watermark. File sharing is used when supported; download and manual-open fallback remain available.
-- Rewritten mobile README and platform-specific release notes. Version and transfer metadata are now 2.3.0; older compatible JSON exports can still be imported.
+- **Optional image labels:** Save PNG opens a label prompt. Enter a label for the top of the image or leave it blank to keep the schedule alone, with no extra top gap. Confirm Save PNG after the preview is ready. Mobile file sharing/download fallback remains unchanged.
 
-## Installation and updating
+## Updated
 
-Select the mobile ZIP directly in Orion's file-based extension installer. The manifest is at its root; no desktop build is included. Update the existing extension where supported and reload open SOLAR tabs. Export cached records before replacing an installation that may create a new extension identity.
+- Weekly schedules and PNGs show only the occupied hours, rounded outward to whole hours. A final 4:50 PM meeting produces a 5:00 PM final time line instead of unused evening hours.
+- The curriculum-title switch is enabled by default. Switch it off to show editable custom-title fields; drafts are retained while changing modes.
+- Shared blocks keep codes on one line when there is room and show one title line below. Narrow codes wrap at the letter/number boundary. Full-title mode retains complete titles and normal 12/10 px image fonts.
+- The schedule's update timestamp is aligned with Save Schedule as PNG. On mobile the status begins with **Updated**, saving space; collection errors are preserved.
+- Version and transfer metadata are 2.3.2. Existing cached records and compatible desktop JSON imports remain supported.
 
-## Verification
+## Retained mobile behavior
 
-Synthetic tests and local PNG renders cover the new image and picker behavior. Native Orion interaction, browser-controlled status shading, and the share/save sheet require device verification. This release does not claim that every host supports live scraping; desktop JSON import remains available.
+The mobile preview uses the width slider without a drag handle. The full six-day image scales to the screen. Saving still uses the native share sheet when supported, with download/manual-open fallback, and does not use the PC downloads permission. The final save starts from the prompt's explicit button tap after encoding finishes so file sharing can retain user activation.
+
+## Updating and verification
+
+Select this ZIP directly in Orion's file-based installer and update the existing installation where supported. Keep a private data export before replacing an installation that may create separate storage.
+
+Automated tests use synthetic data and local canvas renders. Orion's share sheet, native popup sizing, touch interactions, and live SOLAR collection still require device verification.

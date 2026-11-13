@@ -1,6 +1,6 @@
 # Better SOLAR for Mobile
 
-**v2.3.0** — The Better SOLAR mobile compatibility extension, packaged for file-based installation. Academic records, calendar events, and schedules remain available offline after collection or import.
+**v2.3.2** — The Better SOLAR mobile compatibility extension, packaged for file-based installation. Academic records, calendar events, and schedules remain available offline after collection or import.
 
 ## Features
 
@@ -26,11 +26,11 @@ As an alternative, export data on desktop using **Settings → Transfer academic
 
 Tap a section option in Courses Offered or Add a Block Section. You can also type a complete section; a valid choice is retained without pressing Enter.
 
-Use **Save Schedule as PNG** at the bottom right of any weekly schedule. The full six-day image scales to your screen for preview. Drag the resize handle or use the slider to change its layout width (850 px minimum). The gear opens color/title settings; image edits do not modify academic records. **Save PNG** uses file sharing when supported, or a download with an **Open PNG** fallback for manual saving.
+Use **Save Schedule as PNG** at the bottom right of any weekly schedule, alongside its update timestamp. Mobile shortens the status to Updated. The full six-day image scales to your screen for preview. Use the width slider (the mobile package has no drag handle) to change its layout width (850 px minimum). The gear opens color/title settings with curriculum titles enabled by default; image edits do not modify academic records. Exports retain normal 12 px code/title and 10 px time/room text, including overlaps. Wide shared blocks retain a one-line code and one title line; full-title mode displays complete titles. Time lines cover the actual scheduled hours, rounded to hour boundaries. **Save PNG** asks for an optional label before saving. Leave it blank for the schedule alone. Confirming uses file sharing when supported, or a download with an **Open PNG** fallback for manual saving.
 
 ## Release notes
 
-See [RELEASE_NOTES.md](RELEASE_NOTES.md) for Mobile v2.3.0 changes and update notes.
+See [RELEASE_NOTES.md](RELEASE_NOTES.md) for Mobile v2.3.2 changes and update notes.
 
 ## Data and compatibility
 

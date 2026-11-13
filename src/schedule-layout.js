@@ -15,8 +15,9 @@ export function courseCodeLines(code,width,measure,{force=false}={}){
  const digits=match[2].length===4&&match[2].startsWith('0')?match[2].slice(1):match[2];return [match[1]+'-',digits+match[3]];
 }
 export function courseTextLayout(texts,width,measure,fontSize=12,{mobile=false,shared=false}={}){
- const code=courseCodeLines(texts[0],width,measure,{force:shared}).map(line=>fitScheduleLabel(line,width,measure));
- const title=shared&&!mobile?[]:wrapCourseText(texts[1],width,measure,Infinity);return {fontSize,lines:[code,title]};
+ const fitsCode=measure(String(texts[0]||''))<=width+.1;
+ const code=courseCodeLines(texts[0],width,measure).map(line=>fitScheduleLabel(line,width,measure));
+ const title=shared?(fitsCode&&texts[1]?[fitScheduleLabel(texts[1],width,measure)]:[]):wrapCourseText(texts[1],width,measure,Infinity);return {fontSize,lines:[code,title]};
 }
 export function timeTextLines(start,end,width,measure){const full=start+'–'+end;if(measure(full)<=width+.1)return [full];return [...wrapCourseText(start+'–',width,measure,Infinity),...wrapCourseText(end,width,measure,Infinity)];}
 export const compactHour=minutes=>`${Math.floor(minutes/60)%12||12} ${minutes>=720?'PM':'AM'}`;
