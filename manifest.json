@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Better SOLAR",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "Your SOLAR academic records, organized and available offline. All academic data stays in your browser.",
   "permissions": [
     "storage",

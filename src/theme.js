@@ -16,6 +16,7 @@ function apply(theme,animate=true){
      transitionTimer=setTimeout(()=>root.classList?.remove('theme-transition'),320);
    }else root.classList?.remove('theme-transition');
    root.dataset.theme=value;
+   if(typeof dispatchEvent==='function'&&typeof CustomEvent==='function')dispatchEvent(new CustomEvent('better-solar-theme'));
  }
  document.querySelectorAll('[data-theme-toggle],#theme').forEach(button=>{button.setAttribute('aria-label',`Switch to ${value==='dark'?'light':'dark'} mode`);button.setAttribute('aria-pressed',String(value==='dark'));});
  document.querySelectorAll('[data-theme-select]').forEach(select=>select.value=value);

@@ -21,12 +21,13 @@ export function closeSectionPickersIn(scope){for(const instance of instances)if(
 function installListeners(){if(installed)return;installed=true;
  document.addEventListener('pointerdown',event=>{cleanupSectionPickers();for(const instance of instances)if(!instance.root.contains(event.target)&&!instance.list.contains(event.target))instance.restoreAndClose();});
  addEventListener('resize',()=>{cleanupSectionPickers();for(const instance of instances)instance.reposition();});
+ for(const event of ['resize','scroll'])globalThis.visualViewport?.addEventListener(event,()=>{for(const instance of instances)instance.reposition();});
  document.addEventListener('scroll',event=>{for(const instance of instances)if(event.target!==instance.list)instance.reposition();},true);
 }
 export function bindSectionPicker(root,values,value,onChange){
  cleanupSectionPickers();installListeners();
  const input=root.querySelector('input'),toggle=root.querySelector('.section-toggle'),list=root.querySelector('.section-options');
- const allowAll=root.dataset.allowAll!=='false',options=matchingSections(values);let committed=value||'',isOpen=false,items=[],active=0;
+ const allowAll=root.dataset.allowAll!=='false',options=matchingSections(values);let committed=value||'',isOpen=false,items=[],active=0,picking=false;
  input.value=committed;
  function markActive(){
    [...list.querySelectorAll('[role=option]')].forEach((option,index)=>option.classList.toggle('option-active',index===active));
@@ -35,23 +36,30 @@ export function bindSectionPicker(root,values,value,onChange){
      if(top<list.scrollTop)list.scrollTop=top;else if(bottom>list.scrollTop+list.clientHeight)list.scrollTop=bottom-list.clientHeight;
    }else input.removeAttribute('aria-activedescendant');
  }
- function reposition(){if(!isOpen)return;const rect=root.querySelector('.section-control').getBoundingClientRect();if(rect.bottom<8||rect.top>innerHeight-8){close();return;}
-   const geometry=sectionMenuGeometry(rect,document.documentElement.clientWidth||innerWidth,innerHeight,items.length);
-   Object.assign(list.style,{left:geometry.left+'px',top:geometry.top+'px',width:geometry.width+'px',maxHeight:geometry.height+'px'});
+ function reposition(){if(!isOpen)return;const rect=root.querySelector('.section-control').getBoundingClientRect(),viewport=globalThis.visualViewport,offsetX=viewport?.offsetLeft||0,offsetY=viewport?.offsetTop||0,height=viewport?.height||innerHeight;
+   if(rect.bottom<offsetY+8||rect.top>offsetY+height-8){close();return;}
+   const geometry=sectionMenuGeometry({...rect,top:rect.top-offsetY,bottom:rect.bottom-offsetY,left:rect.left-offsetX,width:rect.width},viewport?.width||document.documentElement.clientWidth||innerWidth,height,items.length);
+   Object.assign(list.style,{left:geometry.left+offsetX+'px',top:geometry.top+offsetY+'px',width:geometry.width+'px',maxHeight:geometry.height+'px'});
    list.dataset.placement=geometry.opensAbove?'above':'below';
  }
  function close(){isOpen=false;input.setAttribute('aria-expanded','false');toggle.setAttribute('aria-expanded','false');input.removeAttribute('aria-activedescendant');
    try{if(list.matches(':popover-open'))list.hidePopover();}catch{}list.hidden=true;
  }
  function commit(next){const changed=committed!==next;committed=next;input.value=next;close();if(changed)onChange(next);}
- function restoreAndClose(){const typed=input.value.trim(),exact=options.find(value=>value===typed);
+ function restoreAndClose(){const typed=input.value.trim(),exact=options.find(value=>value.toLocaleLowerCase()===typed.toLocaleLowerCase());
    if(exact!==undefined)commit(exact);else if(!typed&&allowAll)commit('');else{input.value=committed;close();}
  }
  function draw(query=''){
    items=matchingSections(options,query).map(value=>({value,label:value}));if(allowAll&&!query.trim())items.unshift({value:'',label:'All sections'});
    list.replaceChildren();
    items.forEach((item,index)=>{const button=document.createElement('button');button.type='button';button.className='section-option';button.id=list.id+'-'+index;button.setAttribute('role','option');button.setAttribute('aria-selected',String(item.value===committed));button.tabIndex=-1;button.textContent=item.label;
-     button.onpointerdown=event=>event.preventDefault();button.onclick=()=>{commit(item.value);input.focus();close();};list.append(button);
+     let press=null;
+     const start=event=>{picking=true;press={x:event.clientX,y:event.clientY};if(event.pointerType==='mouse')event.preventDefault();};
+     const end=event=>{const tapped=press&&Math.hypot(event.clientX-press.x,event.clientY-press.y)<10;press=null;picking=false;if(tapped){if(event.pointerType!=='mouse')event.preventDefault?.();commit(item.value);if(event.pointerType==='mouse')input.focus();close();}};
+     button.onpointerdown=start;button.onpointerup=end;button.onpointercancel=()=>{press=null;picking=false;};
+     // Older WebKit hosts can expose touch events without PointerEvent.
+     if(typeof PointerEvent==='undefined'){button.ontouchstart=event=>start({clientX:event.touches[0].clientX,clientY:event.touches[0].clientY});button.ontouchend=event=>{const point=event.changedTouches[0];end({clientX:point.clientX,clientY:point.clientY,preventDefault:()=>event.preventDefault()});};button.ontouchcancel=button.onpointercancel;}
+     button.onclick=()=>{picking=false;commit(item.value);};list.append(button);
    });
    if(!items.length){const empty=document.createElement('div');empty.className='section-no-results';empty.setAttribute('role','status');empty.textContent='No matching sections';list.append(empty);}
    active=Math.max(0,items.findIndex(item=>item.value===committed));reposition();markActive();
@@ -61,8 +69,14 @@ export function bindSectionPicker(root,values,value,onChange){
    if(typeof list.showPopover==='function')try{if(!list.matches(':popover-open'))list.showPopover();}catch{}
    reposition();markActive();
  }
- input.onfocus=()=>open();input.oninput=()=>{if(!input.value&&allowAll&&committed){committed='';onChange('');}open(input.value);};
- input.onblur=()=>queueMicrotask(()=>{if(!root.isConnected){close();return;}if(!root.contains(document.activeElement)&&!list.contains(document.activeElement))restoreAndClose();});
+ input.onfocus=()=>open();input.oninput=()=>{
+   const typed=input.value.trim(),exact=options.find(value=>value.toLocaleLowerCase()===typed.toLocaleLowerCase());
+   if(exact!==undefined&&committed!==exact){committed=exact;onChange(exact);}
+   else if(!typed&&allowAll&&committed){committed='';onChange('');}
+   open(input.value);
+ };
+ input.onchange=()=>{if(!picking)restoreAndClose();};
+ input.onblur=()=>queueMicrotask(()=>{if(picking)return;if(!root.isConnected){close();return;}if(!root.contains(document.activeElement)&&!list.contains(document.activeElement))restoreAndClose();});
  input.onkeydown=event=>{
    if(event.key==='ArrowDown'||event.key==='ArrowUp'){event.preventDefault();if(!isOpen)open();else{active=Math.max(0,Math.min(items.length-1,active+(event.key==='ArrowDown'?1:-1)));markActive();}}
    else if(event.key==='Home'&&isOpen){event.preventDefault();active=0;markActive();}
@@ -71,6 +85,6 @@ export function bindSectionPicker(root,values,value,onChange){
    else if(event.key==='Escape'&&isOpen){event.preventDefault();event.stopPropagation();input.value=committed;close();}
    else if(event.key==='Tab')restoreAndClose();
  };
- toggle.onpointerdown=event=>event.preventDefault();toggle.onclick=()=>{if(isOpen){input.value=committed;close();}else{input.focus();open();}};
+ toggle.onpointerdown=event=>{if(event.pointerType==='mouse')event.preventDefault();};toggle.onclick=()=>{if(isOpen)restoreAndClose();else open();};
  const instance={root,list,close,restoreAndClose,reposition};instances.add(instance);return instance;
 }

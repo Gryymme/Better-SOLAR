@@ -1,27 +1,41 @@
-# Better SOLAR — Mobile 2.2.0
+# Better SOLAR for Mobile
 
-## Description / What it's about
-
-The mobile WebExtension runtime for Orion iOS/iPadOS and compatible extension-capable browsers. The mobile manifest is at this ZIP's root.
+**v2.3.0** — The Better SOLAR mobile compatibility extension, packaged for file-based installation. Academic records, calendar events, and schedules remain available offline after collection or import.
 
 ## Features
 
-The shared Better SOLAR UI, offline academic records, Canvas calendar, weekly schedules, schedule creator, themes, Settings and desktop/mobile JSON transfer.
+- Academic records, Canvas calendar, light/dark themes, and Settings.
+- Three-day schedule swipe views with fixed time labels and complete course details.
+- Schedule Creator with searchable sections, individual/block additions, and overlapping meetings.
+- Full-screen PNG export with resizing, color/title settings, and mobile share/download options.
+- Private desktop-to-mobile academic-data transfer.
 
-## How to install / use
+## Installation
 
-Select this ZIP directly in Orion → Extensions → + → file-based installation. Enable the extension and allow SOLAR access. Open Launch Application for the full interface. Keep your existing extension identity when updating to preserve its browser-local cache.
+In Orion's extension settings, choose file-based installation and select **this ZIP directly**. Its manifest is at the archive root; do not repack or nest it in another folder. Enable the extension, allow SOLAR access, and open **Launch Application** for the full interface.
 
-Sign in to SOLAR in the same browser and try Scrape Data / Update SOLAR Data. Settings has direct portal links if SOLAR's mobile hamburger does not work. Reload SOLAR after an extension update so automatic scraper scripts are current.
+### Updating
 
-As an alternative, export records on desktop using Settings → Transfer academic data → Export scraped data. Save the JSON privately on your phone, then choose it in mobile Settings → Choose import file → Import data. Existing newer datasets and unrelated terms are kept.
+Update the existing extension through your browser's supported update/reimport flow. Installing a separate copy can create separate storage. Export records from Settings before replacing an installation. Reload open SOLAR pages after updating.
 
-## Changelogs previews
+## Usage
 
-2.2.0 distinguishes assessment summaries/notes from courses, recognizes a verified empty payments table, keeps dropdown choices during background refresh and supplies independent PC/mobile runtime ZIPs.
+Sign in to SOLAR in the same browser, then choose **Scrape Data** or **Update SOLAR Data**. Settings has direct SOLAR links if the portal's mobile menu does not work.
 
-## Other information
+As an alternative, export data on desktop using **Settings → Transfer academic data → Export scraped data**. Save the JSON privately on your phone, then choose **Choose import file → Import data** in mobile Settings.
 
-Orion APIs vary by version; live scraping still requires device verification. This package includes no desktop build, development tools, tests or personal records. Fonts are fetched/cached on the first online launch unless bundled; the font license is included.
+Tap a section option in Courses Offered or Add a Block Section. You can also type a complete section; a valid choice is retained without pressing Enter.
 
-Cached records are stored in the extension's browser profile. Personal transfer JSON is separate from this installation ZIP. Keep exported JSON private and outside your repository. Settings → Delete all scraped data clears extension data, not downloaded export files.
+Use **Save Schedule as PNG** at the bottom right of any weekly schedule. The full six-day image scales to your screen for preview. Drag the resize handle or use the slider to change its layout width (850 px minimum). The gear opens color/title settings; image edits do not modify academic records. **Save PNG** uses file sharing when supported, or a download with an **Open PNG** fallback for manual saving.
+
+## Release notes
+
+See [RELEASE_NOTES.md](RELEASE_NOTES.md) for Mobile v2.3.0 changes and update notes.
+
+## Data and compatibility
+
+Records live in the extension's browser profile, not this ZIP. This package includes no personal data, PC build, nested archives, tests, or build tools. Keep exported JSON and PNG files private. Settings → Delete all scraped data clears local extension data, not downloaded files or your SOLAR/Canvas accounts.
+
+Mobile hosts vary in extension API support, background suspension, status-bar tinting, and file sharing. Native device behavior still requires verification; desktop JSON import remains available if live collection is unsupported. Browser-owned shading cannot be removed by page CSS. Fonts are cached on the first online launch unless bundled; the SIL license is included.
+
+Created by Gryymme (Elijah Miranda Nonan). Independent student project, not an official FEU/SOLAR/Canvas product.
