@@ -1,3 +1,7 @@
+export function meetingHourBounds(meetings){
+ if(!meetings.length)return {min:420,max:480};
+ return {min:Math.floor(Math.min(...meetings.map(meeting=>meeting.start))/60)*60,max:Math.ceil(Math.max(...meetings.map(meeting=>meeting.end))/60)*60};
+}
 // Partition each day's overlapping intervals into independent connected groups.
 // A later non-conflicting meeting regains the full width of its day column.
 export function meetingLanes(meetings){

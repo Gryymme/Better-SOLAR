@@ -46,12 +46,12 @@ export function validateTransfer(input){
  if(!Number.isFinite(Date.parse(bundle.exportedAt)))fail('Invalid export date.');
  let canvas;
  if(bundle.canvas){if(!object(bundle.canvas)||typeof bundle.canvas.source!=='string'||bundle.canvas.source.length>10000000||!Number.isFinite(Date.parse(bundle.canvas.fetchedAt)))fail('Invalid cached Canvas calendar.');const events=parseICS(bundle.canvas.source);for(const event of events)if(event.url){let url;try{url=new URL(event.url);}catch{fail('Invalid calendar event URL.');}if(!['https:','http:'].includes(url.protocol))fail('Invalid calendar event URL.');}canvas={source:bundle.canvas.source,fetchedAt:bundle.canvas.fetchedAt,eventCount:events.length,url:''};}
- return {format:TRANSFER_FORMAT,schemaVersion:1,appVersion:'2.3.0',exportedAt:bundle.exportedAt,owner:bundle.owner,records,...(canvas?{canvas}:{})};
+ return {format:TRANSFER_FORMAT,schemaVersion:1,appVersion:'2.3.2',exportedAt:bundle.exportedAt,owner:bundle.owner,records,...(canvas?{canvas}:{})};
 }
 export async function createTransfer({includeCanvas=false}={}){
  const records=(await allRecords()).filter(record=>record.data);if(!records.length)fail('No scraped academic data is available to export.');
  const owner=(await getMeta('activeOwner'))||records.find(record=>record.category==='User Profile')?.data?.values?.['Student Number']||records[0].owner;
  const canvas=includeCanvas?await getMeta('canvas'):null;
- return validateTransfer({format:TRANSFER_FORMAT,schemaVersion:1,appVersion:'2.3.0',exportedAt:new Date().toISOString(),owner,records,...(canvas?.source?{canvas:{source:canvas.source,fetchedAt:canvas.fetchedAt}}:{})});
+ return validateTransfer({format:TRANSFER_FORMAT,schemaVersion:1,appVersion:'2.3.2',exportedAt:new Date().toISOString(),owner,records,...(canvas?.source?{canvas:{source:canvas.source,fetchedAt:canvas.fetchedAt}}:{})});
 }
 export async function importTransfer(input){const bundle=validateTransfer(input);return importRecordSnapshot(bundle);}

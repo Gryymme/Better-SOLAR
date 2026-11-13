@@ -1,14 +1,16 @@
 // A deterministic, local canvas renderer: the preview and PNG use the same pixels.
 import {DAYS,DAY_NAMES,clock,occurrences,roomLabel,amount} from './core.js';
-import {meetingLanes} from './meeting-layout.js';
+import {meetingLanes,meetingHourBounds} from './meeting-layout.js';
+import {courseCodeLines,fitScheduleLabel} from './schedule-layout.js';
 
 export const PNG_MIN_WIDTH=850,PNG_MAX_WIDTH=2200,DEFAULT_BLOCK_COLOR='#2e844c';
+export const IMAGE_COURSE_FONT=12,IMAGE_MEETING_FONT=10;
 export const exportCourseKey=course=>String(course.code||'').trim();
 export function imageOptions(options={}){
  const width=Math.round(Number(options.width)||PNG_MIN_WIDTH);
  return {width:Math.min(PNG_MAX_WIDTH,Math.max(PNG_MIN_WIDTH,width)),dark:options.dark===true,
   color:/^#[\da-f]{6}$/i.test(options.color||'')?options.color:DEFAULT_BLOCK_COLOR,
-  fullTitles:options.fullTitles===true,customTitles:{...options.customTitles}};
+  fullTitles:options.fullTitles===true,label:String(options.label||'').replace(/\s+/g,' ').trim().slice(0,200),customTitles:{...options.customTitles}};
 }
 export function imageTitle(course,options){
  const key=exportCourseKey(course),custom=options.customTitles?.[key];
@@ -18,8 +20,8 @@ export function imageTitle(course,options){
  if(!/\s/.test(Array.from(text)[37]||'')&&prefix.includes(' '))prefix=prefix.slice(0,prefix.lastIndexOf(' '));
  return prefix+'...';
 }
-// Wrap whole words. A single long word gets a smaller uniform block font rather
-// than being broken into letters or clipped in the full-title export.
+// Wrap whole words at the normal timetable font size. The image can grow
+// wider/taller to fit; a narrow overlap never shrinks the rest of the week.
 export function imageLines(text,width,measure){
  const lines=[];let line='';
  for(const word of String(text||'').trim().split(/\s+/).filter(Boolean)){
@@ -35,22 +37,27 @@ export function readableInk(hex){
 const time=minutes=>clock(minutes).replace(/^0(?=\d:)/,'');
 export function scheduleImageModel(courses,rawOptions={},measure=(text,size)=>text.length*size*.6,year=new Date().getFullYear()){
  const options=imageOptions(rawOptions),parsed=courses.map(occurrences),meetings=meetingLanes(parsed.flatMap(item=>item.items));
- const min=Math.min(420,...meetings.map(item=>Math.floor(item.start/60)*60)),max=Math.max(1260,...meetings.map(item=>Math.ceil(item.end/60)*60));
- const gutter=62,pad=22,header=54,top=header+20,dayWidth=(options.width-pad*2-gutter)/6;
- let hourHeight=60;
+ const {min,max}=meetingHourBounds(meetings);
+ const gutter=62,pad=22,size=IMAGE_COURSE_FONT,small=IMAGE_MEETING_FONT;
+ let hourHeight=60,requiredWidth=Math.max(PNG_MIN_WIDTH,...options.label.split(/\s+/).filter(Boolean).map(word=>measure(word,18,700)+pad*2));
+ const initialDayWidth=(options.width-pad*2-gutter)/6;
  const prepared=meetings.map(meeting=>{
-  const course=meeting.course,innerWidth=dayWidth/meeting.columns-18,title=imageTitle(course,options);
-  const words=[course.code,title].join(' ').split(/\s+/).filter(Boolean);
-  const longest=Math.max(1,...words.map(word=>measure(word,12,700)));
+  const course=meeting.course,shared=meeting.columns>1,title=imageTitle(course,options);
+  const code=courseCodeLines(course.code,initialDayWidth/meeting.columns-18,text=>measure(text,size,700));
   const credits=amount(course.credits),details=[credits===null?'':`${credits} credits`,[course.section,roomLabel(meeting.room)].filter(Boolean).join(' / ')];
-  const longestDetail=Math.max(1,...[time(meeting.start)+'–',time(meeting.end),...details.flatMap(text=>text.split(/\s+/))].map(word=>measure(word,10,400)));
-  return {meeting,course,innerWidth,title,details,size:12*innerWidth/longest,small:10*innerWidth/longestDetail};
+  const titleWords=shared&&!options.fullTitles?[]:title.split(/\s+/).filter(Boolean),detailWords=details.flatMap(text=>text.split(/\s+/));
+  const requiredInner=Math.max(1,...[...code,...titleWords].map(text=>measure(text,size,700)),...[time(meeting.start)+'–',time(meeting.end),...detailWords].map(text=>measure(text,small,400)));
+  requiredWidth=Math.max(requiredWidth,pad*2+gutter+(requiredInner+18)*6*meeting.columns);
+  return {meeting,course,title,details};
  });
- // One title/code size and one time/room size across the entire exported week.
- const size=Math.min(12,...prepared.map(block=>block.size)),small=Math.min(10,size,...prepared.map(block=>block.small));
- const blocks=prepared.map(({meeting,course,innerWidth,title,details})=>{
-  const lines=[...imageLines(course.code,innerWidth,text=>measure(text,size,700)).map(text=>({text,size,weight:700})),
-   ...imageLines(title,innerWidth,text=>measure(text,size,700)).map(text=>({text,size,weight:700}))];
+ options.width=Math.max(options.width,Math.ceil(requiredWidth));
+ if(options.width>PNG_MAX_WIDTH)throw Error('This schedule needs more horizontal space at the normal font size. Shorten an unusually long label/title word, or turn off full titles.');
+ const dayWidth=(options.width-pad*2-gutter)/6,labelLines=imageLines(options.label,options.width-pad*2,text=>measure(text,18,700)),labelHeight=labelLines.length?labelLines.length*24+18:0,header=54+labelHeight,top=header+20;
+ const blocks=prepared.map(({meeting,course,title,details})=>{
+  const innerWidth=dayWidth/meeting.columns-18,code=courseCodeLines(course.code,innerWidth,text=>measure(text,size,700)),fitsCode=measure(course.code,size,700)<=innerWidth+.1;
+  const titleLines=meeting.columns>1&&!options.fullTitles?(fitsCode&&title?[fitScheduleLabel(title,innerWidth,text=>measure(text,size,700))]:[]):imageLines(title,innerWidth,text=>measure(text,size,700));
+  const lines=[...code.map(text=>({text,size,weight:700})),
+   ...titleLines.map(text=>({text,size,weight:700}))];
   const fullTime=`${time(meeting.start)}–${time(meeting.end)}`;
   const timeLines=measure(fullTime,small,400)<=innerWidth?[fullTime]:[time(meeting.start)+'–',time(meeting.end)];
   lines.push(...timeLines.map(text=>({text,size:small,weight:400})));
@@ -61,7 +68,7 @@ export function scheduleImageModel(courses,rawOptions={},measure=(text,size)=>te
  });
  hourHeight=Math.ceil(hourHeight);
  const height=Math.ceil(top+(max-min)/60*hourHeight+32);
- return {options,width:options.width,height,gutter,pad,header,top,dayWidth,hourHeight,min,max,
+ return {options,width:options.width,height,gutter,pad,header,top,labelLines,labelHeight,dayWidth,hourHeight,min,max,
   warnings:[...new Set(parsed.flatMap(item=>item.warnings))],watermark:`© Gryymme, ${year}`,
   blocks:blocks.map(block=>({...block,x:pad+gutter+(DAYS.indexOf(block.meeting.day)+block.meeting.lane/block.meeting.columns)*dayWidth+2,
    y:top+(block.meeting.start-min)/60*hourHeight,width:dayWidth/block.meeting.columns-4,height:(block.meeting.end-block.meeting.start)/60*hourHeight-4}))};
@@ -79,8 +86,9 @@ export function drawScheduleImage(canvas,courses,options={},year){
  canvas.width=Math.floor(model.width*scale);canvas.height=Math.floor(model.height*scale);context.setTransform(canvas.width/model.width,0,0,canvas.height/model.height,0,0);
  const paper=dark?'#1c1c1e':'#ffffff',ink=dark?'#f2f2f2':'#1c2f27',muted=dark?'#b4b4b8':'#64736b',border=dark?'#414145':'#dfe4df';
  context.fillStyle=paper;context.fillRect(0,0,model.width,model.height);context.textBaseline='top';
- context.font=`600 12px ${family}`;context.fillStyle=ink;context.textAlign='center';
- DAY_NAMES.forEach((day,index)=>context.fillText(day.toUpperCase(),model.pad+model.gutter+(index+.5)*model.dayWidth,26));
+ context.fillStyle=ink;context.textAlign='center';context.font=`700 18px ${family}`;model.labelLines.forEach((line,index)=>context.fillText(line,model.width/2,24+index*24));
+ context.font=`600 12px ${family}`;
+ DAY_NAMES.forEach((day,index)=>context.fillText(day.toUpperCase(),model.pad+model.gutter+(index+.5)*model.dayWidth,26+model.labelHeight));
  for(let minutes=model.min;minutes<=model.max;minutes+=60){
   const y=model.top+(minutes-model.min)/60*model.hourHeight;context.strokeStyle=border;context.lineWidth=1;context.setLineDash([3,3]);context.beginPath();context.moveTo(model.pad+model.gutter,y);context.lineTo(model.width-model.pad,y);context.stroke();context.setLineDash([]);
   context.font=`400 10px ${family}`;context.fillStyle=muted;context.textAlign='right';context.fillText(time(minutes),model.pad+model.gutter-8,y-5);
