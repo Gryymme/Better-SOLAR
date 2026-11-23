@@ -1,10 +1,10 @@
 # Better SOLAR for PC
 
-**v2.3.2** — A local-first FEU Alabang SOLAR companion for desktop Chrome/Edge. View academic records, connect your Canvas calendar, and plan or export a weekly schedule.
+**v2.3.2** - A local-first FEU Alabang SOLAR companion for desktop Chrome/Edge. View academic records, connect your Canvas calendar, and plan or export a weekly schedule. Also available for mobile versions (ios/android) (see mobile build release).
 
 ![Better SOLAR desktop dashboard in the default theme](demo-images/dashboard-page.png)
 
-*A first look at the Better SOLAR dashboard.*
+_A first look at the Better SOLAR dashboard._
 
 ## Features
 
@@ -21,25 +21,25 @@ Review your profile, curriculum, and grades in dedicated views.
 
 ![User profile page in Better SOLAR](demo-images/userprofile-page.png)
 
-*Profile — view cached student information.*
+_Profile — view cached student information._
 
 ![Curriculum page in Better SOLAR](demo-images/curriculum-page.png)
 
-*Curriculum — browse your academic curriculum.*
+_Curriculum — browse your academic curriculum._
 
 ![Grades page in Better SOLAR](demo-images/grades-page.png)
 
-*Grades — review cached academic results.*
+_Grades — review cached academic results._
 
 ### Schedule, assessment, and balances
 
 ![Schedule and assessment page in Better SOLAR](demo-images/scheduleandassessment-page.png)
 
-*Schedule and assessment — review your schedule and assessment information.*
+_Schedule and assessment — review your schedule and assessment information._
 
 ![Account balance summary page in Better SOLAR](demo-images/accountbalancesummary-page.png)
 
-*Account balance summary — review cached balance information.*
+_Account balance summary — review cached balance information._
 
 ### Course offerings and enrollment planning
 
@@ -47,27 +47,27 @@ Explore offerings and compare the enrollment view before and after adding conten
 
 ![Courses offered page in Better SOLAR](demo-images/coursesoffered-page.png)
 
-*Courses offered — browse available course offerings.*
+_Courses offered — browse available course offerings._
 
 ![Enrollment page with an empty schedule visualizer](demo-images/enrollment-page-novisualizercontent.png)
 
-*Enrollment — the schedule visualizer before content is added.*
+_Enrollment — the schedule visualizer before content is added._
 
 ![Enrollment page with content in the schedule visualizer](demo-images/enrollment-page-withvisualizercontent.png)
 
-*Enrollment — the schedule visualizer with planning content added.*
+_Enrollment — the schedule visualizer with planning content added._
 
 ### Schedule export
 
 ![Save Schedule as PNG page in Better SOLAR](demo-images/savescheduleaspng-page.png)
 
-*Save Schedule as PNG — preview your schedule for image export.*
+_Save Schedule as PNG — preview your schedule for image export._
 
 ### Dark mode
 
 ![Better SOLAR dashboard with the dark theme enabled](demo-images/dashboard-page-darkmode.png)
 
-*The dashboard in dark mode.*
+_The dashboard in dark mode._
 
 ## Installation
 
