@@ -21,25 +21,25 @@ Review your profile, curriculum, and grades in dedicated views.
 
 ![User profile page in Better SOLAR](demo-images/userprofile-page.png)
 
-_Profile — view cached student information._
+_Profile - view cached student information._
 
 ![Curriculum page in Better SOLAR](demo-images/curriculum-page.png)
 
-_Curriculum — browse your academic curriculum._
+_Curriculum - browse your academic curriculum._
 
 ![Grades page in Better SOLAR](demo-images/grades-page.png)
 
-_Grades — review cached academic results._
+_Grades - review cached academic results._
 
 ### Schedule, assessment, and balances
 
 ![Schedule and assessment page in Better SOLAR](demo-images/scheduleandassessment-page.png)
 
-_Schedule and assessment — review your schedule and assessment information._
+_Schedule and assessment - review your schedule and assessment information._
 
 ![Account balance summary page in Better SOLAR](demo-images/accountbalancesummary-page.png)
 
-_Account balance summary — review cached balance information._
+_Account balance summary - review cached balance information._
 
 ### Course offerings and enrollment planning
 
@@ -47,21 +47,17 @@ Explore offerings and compare the enrollment view before and after adding conten
 
 ![Courses offered page in Better SOLAR](demo-images/coursesoffered-page.png)
 
-_Courses offered — browse available course offerings._
-
-![Enrollment page with an empty schedule visualizer](demo-images/enrollment-page-novisualizercontent.png)
-
-_Enrollment — the schedule visualizer before content is added._
+_Courses offered - browse available course offerings._
 
 ![Enrollment page with content in the schedule visualizer](demo-images/enrollment-page-withvisualizercontent.png)
 
-_Enrollment — the schedule visualizer with planning content added._
+_Courses offered - the schedule visualizer with planning content added._
 
 ### Schedule export
 
 ![Save Schedule as PNG page in Better SOLAR](demo-images/savescheduleaspng-page.png)
 
-_Save Schedule as PNG — preview your schedule for image export._
+_Save Schedule as PNG - preview your schedule for image export._
 
 ### Dark mode
 
